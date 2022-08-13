@@ -107,7 +107,7 @@ class VacanciesInfoModel(models.Model):
     compensation = models.FloatField(null = True)
 
     def __str__(self):
-        return self.id
+        return str(self.id)
 
 
 class VacancyApplicantMapping(models.Model):

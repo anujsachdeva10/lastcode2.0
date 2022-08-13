@@ -12,6 +12,8 @@ import openpyxl
 from rest_framework.decorators import api_view
 # Create your views here.
 
+# timepass krra hu check krne ke liye ki sb thk chlra hai ya nhi.
+
 class ApplicantAPIView(APIView):
     # Method to fetch the details of an applicant using username.
     def get(self, request, username, format = None):
