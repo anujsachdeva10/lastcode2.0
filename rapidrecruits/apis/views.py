@@ -17,48 +17,28 @@ from rest_framework.decorators import api_view
 class ApplicantAPIView(APIView):
     # Method to fetch the details of an applicant using username.
     def get(self, request, username, format = None):
-        # if (pk == None):
-        #     applicants = ApplicantInfoModel.objects.all()
-        #     result = []
-        #     for applicant in applicants:
-        #         temp_result = {}
-        #         temp_result["id"] = 
-        #         temp_result["username"] = applicant.user.username
-        #         temp_result["email"] = applicant.user.email
-        #         temp_result["description"] = applicant.description
-        #         temp_result["full_name"] = applicant.full_name
-        #         temp_result["DOB"] = applicant.DOB
-        #         temp_result["gender"] = applicant.gender
-        #         temp_result["address"] = applicant.address
-        #         temp_result["state"] = applicant.state
-        #         temp_result["pincode"] = applicant.pincode
-        #         temp_result["category"] = applicant.category
-        #         temp_result["marital_status"] = applicant.marital_status
-        #         temp_result["phone_number"] = applicant.phone_number
-        #         temp_result["total_experience"] = applicant.total_experience
-        #         temp_result["skillset"] = applicant.skillset
-        #         result.append(temp_result)
-        #     return Response(result, status = 200)
-
-        # else:
         user = User.objects.get(username = username)
-        applicant = ApplicantInfoModel.objects.get(user = user)
         temp_result = {}
-        temp_result["username"] = applicant.user.username
-        temp_result["email"] = applicant.user.email
-        temp_result["description"] = applicant.description
-        temp_result["full_name"] = applicant.full_name
-        temp_result["DOB"] = applicant.DOB
-        temp_result["gender"] = applicant.gender
-        temp_result["address"] = applicant.address
-        temp_result["state"] = applicant.state
-        temp_result["pincode"] = applicant.pincode
-        temp_result["category"] = applicant.category
-        temp_result["marital_status"] = applicant.marital_status
-        temp_result["phone_number"] = applicant.phone_number
-        temp_result["total_experience"] = applicant.total_experience
-        temp_result["skillset"] = applicant.skillset.split(" ")
-        return Response(temp_result, status = 200)
+        temp_result["username"] = user.username
+        temp_result["email"] = user.email
+        if (ApplicantInfoModel.objects.filter(user = user).exists()):
+            applicant = ApplicantInfoModel.objects.get(user = user)
+            temp_result["description"] = applicant.description
+            temp_result["full_name"] = applicant.full_name
+            temp_result["DOB"] = applicant.DOB
+            temp_result["gender"] = applicant.gender
+            temp_result["address"] = applicant.address
+            temp_result["state"] = applicant.state
+            temp_result["pincode"] = applicant.pincode
+            temp_result["category"] = applicant.category
+            temp_result["marital_status"] = applicant.marital_status
+            temp_result["phone_number"] = applicant.phone_number
+            temp_result["total_experience"] = applicant.total_experience
+            temp_result["skillset"] = applicant.skillset.split(" ")
+            return Response(temp_result, status = 200)
+        else:
+            return Response({"user" : temp_result, "mssg" : "Applicant profile not updated!"}, status = 403)
+
 
     # Posting the data of the applicant and user signup and login api.
     def post(self, request, format = None):
@@ -94,32 +74,32 @@ class ApplicantAPIView(APIView):
     # Updating the data of the applicant using username.
     def put(self, request, username, format = None):
         user = User.objects.get(username = username)
-        applicant = ApplicantInfoModel.objects.get(user = user)
-        user.email = request.data.get("email")
-        applicant.description = request.data.get("description")
-        applicant.full_name = request.data.get("full_name")
-        applicant.DOB = request.data.get("DOB")
-        applicant.gender = request.data.get("gender")
-        applicant.address = request.data.get("address")
-        applicant.state = request.data.get("state")
-        applicant.pincode = request.data.get("pincode")
-        applicant.category = request.data.get("category")
-        applicant.marital_status = request.data.get("marital_status")
-        applicant.phone_number = request.data.get("phone_number")
-        applicant.total_experience = request.data.get("total_experience")
-        applicant.skillset = " ".join(request.data.get("skillset"))
-        user.save()
-        applicant.save()
-        return Response({"mssg" : "user updated successfully"}, status = 204)
+        if (ApplicantInfoModel.objects.filter(user = user).exists()):
+            applicant = ApplicantInfoModel.objects.get(user = user)
+            user.email = request.data.get("email")
+            applicant.description = request.data.get("description")
+            applicant.full_name = request.data.get("full_name")
+            applicant.DOB = request.data.get("DOB")
+            applicant.gender = request.data.get("gender")
+            applicant.address = request.data.get("address")
+            applicant.state = request.data.get("state")
+            applicant.pincode = request.data.get("pincode")
+            applicant.category = request.data.get("category")
+            applicant.marital_status = request.data.get("marital_status")
+            applicant.phone_number = request.data.get("phone_number")
+            applicant.total_experience = request.data.get("total_experience")
+            applicant.skillset = " ".join(request.data.get("skillset"))
+            user.save()
+            applicant.save()
+            return Response({"mssg" : "user updated successfully"}, status = 204)
+        else: 
+            return Response({"mssg : Personal Profile not updated!"}, status = 403)
 
     # Deleting user from the database.
     def delete(self, request, username, format = None):
         user = User.objects.get(username = username)
-        applicant = ApplicantInfoModel.objects.get(user = user)
         user.delete()
-        applicant.delete()
         return Response({"mssg": "user delete successfully"}, status = 200)
-
 
 
 # Model for performing the CRUD operations on the user qualification.
@@ -188,6 +168,7 @@ class CollegeAPIView(APIView):
         user.delete()
         college.delete()
         return Response({"mssg": "user delete successfully"}, status = 200)    
+
 
 class QualificationAPIView(APIView):
     
@@ -485,3 +466,31 @@ class ExperienceAPIView(APIView):
         experience = ApplicantExperienceModel.objects.get(applicant = applicant, institute = request.data["institute"])
         experience.delete()
         return Response({"mssg": "experience deleted successfully"}, status = 200)
+
+
+# RESTRICTED SNIPPETS!
+
+        # if (pk == None):
+        #     applicants = ApplicantInfoModel.objects.all()
+        #     result = []
+        #     for applicant in applicants:
+        #         temp_result = {}
+        #         temp_result["id"] = 
+        #         temp_result["username"] = applicant.user.username
+        #         temp_result["email"] = applicant.user.email
+        #         temp_result["description"] = applicant.description
+        #         temp_result["full_name"] = applicant.full_name
+        #         temp_result["DOB"] = applicant.DOB
+        #         temp_result["gender"] = applicant.gender
+        #         temp_result["address"] = applicant.address
+        #         temp_result["state"] = applicant.state
+        #         temp_result["pincode"] = applicant.pincode
+        #         temp_result["category"] = applicant.category
+        #         temp_result["marital_status"] = applicant.marital_status
+        #         temp_result["phone_number"] = applicant.phone_number
+        #         temp_result["total_experience"] = applicant.total_experience
+        #         temp_result["skillset"] = applicant.skillset
+        #         result.append(temp_result)
+        #     return Response(result, status = 200)
+
+        # else:
