@@ -6,6 +6,7 @@ from django.utils import timezone
 
 # Create your models here.
 
+
 class ApplicantInfoModel(models.Model):
     # Personal Details
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="applicant")

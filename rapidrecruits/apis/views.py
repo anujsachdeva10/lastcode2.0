@@ -12,8 +12,7 @@ import openpyxl
 from rest_framework.decorators import api_view
 # Create your views here.
 
-# timepass krra hu check krne ke liye ki sb thk chlra hai ya nhi.
-
+# DOCUMENTATION DONE!
 class ApplicantAPIView(APIView):
     # Method to fetch the details of an applicant using username.
     def get(self, request, username, format = None):
@@ -168,6 +167,7 @@ class CollegeAPIView(APIView):
         return Response({"mssg": "user delete successfully"}, status = 200)    
 
 
+# DOCUMENTATION DONE!
 # Model for performing the CRUD operations on the user qualification.
 class QualificationAPIView(APIView):
     
@@ -211,6 +211,7 @@ class QualificationAPIView(APIView):
         return Response({"mssg": "qualification deleted successfully"}, status = 200)
 
 
+# DOCUMENTATION DONE!
 # Method to get the employee data using the college name and the employee id. We need to mention get in the square brackets else nothing will work. 
 @api_view(["GET"])
 def get_employee_by_id(request, college_name, id):
@@ -222,7 +223,7 @@ def get_employee_by_id(request, college_name, id):
         del temp_result["_state"]
         return Response({"employee" : temp_result}, status = 200)
 
-
+# DOCUMENTATION DONE!
 # this api is used to change the status of the employee from active to notice period and mail all the required faculties that recruitment process has been initiated.
 @api_view(["POST"])
 def Change_employee_status(request, college_name, id):
@@ -235,6 +236,7 @@ def Change_employee_status(request, college_name, id):
         return Response({"mssg": "status changed successfully!"}, status = 204)
     
 
+# DOCUMENTATION DONE!
 class EmployeeAPIView(APIView):
 
     # Method to fetch the data of all the employees of the particular college using college name.
@@ -304,7 +306,7 @@ class EmployeeAPIView(APIView):
         employee.delete()
         return Response({"mssg": "employee deleted successfully!"}, status = 200)
 
-
+# DOCUMENTATION DONE!
 # Method to get the vacancies for a particular applicant using applicant username.
 @api_view(["GET"])
 def get_vacancies_for_applicant(request, username):
@@ -331,7 +333,7 @@ def get_vacancies_for_applicant(request, username):
         result.append(temp_result)
     return Response({"vacancies" : result}, status = 200)
 
-
+# DOCUMENTATION DONE!
 # Method to get the applicants for a particular vacancy using vacancy id.
 @api_view(["GET"])
 def get_applicants_for_vacancy(request, id):
@@ -352,7 +354,7 @@ def get_applicants_for_vacancy(request, id):
         result.append(temp_result)
     return Response({"applicants" : result}, status = 200)
 
-
+# DOCUMENTATION DONE!
 @api_view(["POST"])
 def apply_for_vacancy(request, username):
     request.data["applicant"] = User.objects.get(username = username)
@@ -362,6 +364,7 @@ def apply_for_vacancy(request, username):
     return Response({"mssg" : "Applied for the vacancy successfully!"}, status = 200)
             
 
+# DOCUMENTATION DONE!
 class VacanciesAPIView(APIView):
 
     # Method to get all the vacancies posted by a particular college using college name or to get all the vacancies present in the system if college not given.
@@ -425,6 +428,7 @@ class VacanciesAPIView(APIView):
         vacancy.delete()
         return Response({"mssg": "Vacancy deleted successfully!"}, status = 200)
         
+
 class ExperienceAPIView(APIView):
     
     def get(self, request, username, format = None):
