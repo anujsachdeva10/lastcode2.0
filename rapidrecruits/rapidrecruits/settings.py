@@ -26,7 +26,7 @@ SECRET_KEY = 'joc@pv6v#^6*62qzch&e_9zyxx84e^*rz#wk&om_11b0q1qsxf'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [rapidrecruits.pythonanywhere.com]
+ALLOWED_HOSTS = ['rapidrecruits.pythonanywhere.com']
 
 
 # Application definition
@@ -121,6 +121,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+# STATIC_ROOT = '/
 STATICFILES_DIRS = [
     STATIC_DIR,
 ]
@@ -129,14 +130,3 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = MEDIA_DIR
 
 LOGIN_URL = '/login/'
-
-
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'rapidrecruits1.0@gmail.com' 
-EMAIL_HOST_PASSWORD = 'kmlcmtzmkacqlmrh'
-EMAIL_USE_TLS = True
-
-
-
-#kmlcmtzmkacqlmrh
