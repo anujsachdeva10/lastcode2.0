@@ -102,8 +102,6 @@ class ApplicantAPIView(APIView):
         return Response({"mssg": "user delete successfully"}, status = 200)
 
 
-# Model for performing the CRUD operations on the user qualification.
-
 class CollegeAPIView(APIView):
     def get(self, request, username, format = None):
         user = User.objects.get(username = username)
@@ -170,6 +168,7 @@ class CollegeAPIView(APIView):
         return Response({"mssg": "user delete successfully"}, status = 200)    
 
 
+# Model for performing the CRUD operations on the user qualification.
 class QualificationAPIView(APIView):
     
     # Method to get the qualifications of a particular applicant using username.
