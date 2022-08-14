@@ -10,6 +10,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 import openpyxl
 from rest_framework.decorators import api_view
+from django.core.mail import send_mail
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 # DOCUMENTATION DONE!
@@ -233,6 +235,15 @@ def Change_employee_status(request, college_name, id):
         employee = EmployeeInfoModel.objects.get(college = college, id = id)
         employee.status = request.data["status"]
         employee.save()
+        message_name = "Initiate recruitment process"
+        message_email = "rapidrecruits1.0@gmail.com"
+        message = "Dear all, Mr./Mrs. {} is about to leave/retire from their position please initiate recruitment process".format(employee.name)
+        send_mail(
+            message_name,#subject
+            message,#message
+            message_email,#from email
+            [college.director_mail, college.registrar_mail, college.hod_mail, employee.email, college.user.email],#to email
+        )
         return Response({"mssg": "status changed successfully!"}, status = 204)
     
 
@@ -497,3 +508,6 @@ class ExperienceAPIView(APIView):
         #     return Response(result, status = 200)
 
         # else:
+
+#Send Email
+

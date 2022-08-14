@@ -79,12 +79,7 @@ class EmployeeInfoModel(models.Model):
     gender = models.CharField(max_length = 10, blank = False)
     category = models.CharField(default = "", max_length = 20, blank = True)
     status = models.CharField(max_length = 15, blank = True, null = True)
-    # COMMENTED FIELDS NOT REQUIRED.
-    # address = models.CharField(max_length = 100, blank = True)
-    # state = models.CharField(default = "", max_length = 20, blank = True)
-    # pincode = models.PositiveSmallIntegerField(default = 0, null = True)
-    # marital_status = models.BooleanField(blank = True)
-    # Contact Details.
+    # empid = models.CharField(default = "0000", max_length = 15, blank = True, null = True)
     email = models.CharField(max_length = 30, blank = False)
     phone_number = models.PositiveSmallIntegerField(default = 0, null = True)
     # Desgination Details.
