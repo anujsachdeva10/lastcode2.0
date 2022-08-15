@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 from django.contrib.auth.models import User
 from django.utils import timezone
+from taggit.managers import TaggableManager
 
 # Create your models here.
 
@@ -24,7 +25,7 @@ class ApplicantInfoModel(models.Model):
     phone_number = models.PositiveSmallIntegerField(default = 0, null = True)
     # Career Details.
     total_experience = models.FloatField(default = 0, null = True)
-    skillset = models.CharField(default = "", max_length = 20, blank = True, null=True)
+    skillset = TaggableManager()
     resume = models.CharField(max_length = 200, blank = True, null=True)
 
     def __str__(self):
@@ -91,15 +92,15 @@ class EmployeeInfoModel(models.Model):
 
 class VacanciesInfoModel(models.Model):
     college = models.ForeignKey(CollegeInfoModel, on_delete=models.CASCADE, related_name = "vacancy")
-    title = models.CharField(max_length = 100, blank = True)   # This may include Prof. for CG, CS etc.
-    type = models.CharField(max_length = 100, blank = True)    # This may include assistant prof, prof, intern etc.
-    experience = models.CharField(max_length = 100, blank = True)
-    date_of_posting = models.CharField(max_length = 20, blank = True)
-    state = models.BooleanField(default = True, blank = True)   # Whehter accepting applicants of not.
-    description = models.CharField(max_length = 500, blank = True)
-    responsibilities = models.CharField(max_length = 500, blank = True)
-    qualifications = models.CharField(max_length = 500, blank = True)
-    skills = models.CharField(max_length = 200, blank = True)
+    title = models.CharField(max_length = 100, blank = True, null = True)   # This may include Prof. for CG, CS etc.
+    type = models.CharField(max_length = 100, blank = True, null = True)    # This may include assistant prof, prof, intern etc.
+    experience = models.CharField(max_length = 100, blank = True, null = True)
+    date_of_posting = models.CharField(max_length = 20, blank = True, null = True)
+    state = models.BooleanField(default = True, blank = True, null = True)   # Whehter accepting applicants of not.
+    description = models.CharField(max_length = 500, blank = True, null = True)
+    responsibilities = models.CharField(max_length = 500, blank = True, null = True)
+    qualifications = models.CharField(max_length = 500, blank = True, null = True)
+    skills = TaggableManager()
     compensation = models.FloatField(null = True)
 
     def __str__(self):
