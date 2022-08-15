@@ -35,7 +35,7 @@ class ApplicantAPIView(APIView):
             temp_result["marital_status"] = applicant.marital_status
             temp_result["phone_number"] = applicant.phone_number
             temp_result["total_experience"] = applicant.total_experience
-            temp_result["skillset"] = applicant.skillset.split(" ")
+            temp_result["skillset"] = applicant.skillset.names()
             return Response(temp_result, status = 200)
         else:
             return Response({"user" : temp_result, "mssg" : "Applicant profile not updated!"}, status = 403)
@@ -68,8 +68,12 @@ class ApplicantAPIView(APIView):
         elif (request.data["purpose"] == "fill details"):
             user = User.objects.get(username = request.data["username"])
             request.data["details"]["user"] = user
-            request.data["details"]["skillset"] = " ".join(request.data["details"]["skillset"])
-            ApplicantInfoModel.objects.create(**request.data["details"])
+            temp = request.data["details"]["skillset"]
+            del request.data["details"]["skillset"]
+            applicant = ApplicantInfoModel.objects.create(**request.data["details"])
+            for skill in temp:
+                applicant.skillset.add(skill)
+            # print (type(applicant.skillset))
             return Response({"mssg": "data updated successfully!"}, status = 202)
 
     # Updating the data of the applicant using username.
@@ -89,7 +93,9 @@ class ApplicantAPIView(APIView):
             applicant.marital_status = request.data.get("marital_status")
             applicant.phone_number = request.data.get("phone_number")
             applicant.total_experience = request.data.get("total_experience")
-            applicant.skillset = " ".join(request.data.get("skillset"))
+            applicant.skillset.clear()
+            for skill in request.data["skillset"]:
+                applicant.skillset.add(skill)
             user.save()
             applicant.save()
             return Response({"mssg" : "user updated successfully"}, status = 204)
@@ -335,9 +341,8 @@ def get_vacancies_for_applicant(request, username):
             # This state is the reference object to the college.
             if (key == "_state"):
                 continue
-            if (key == "skills"):
-                temp["skills"] = temp["skills"].split(" ")
             temp_result[key] = temp[key]
+        temp_result["skills"] = vacancy.skills.names()
         temp_result["college_name"] = vacancy.college.user.username
         temp_result["location"] = vacancy.college.location
         temp_result["website"] = vacancy.college.website
@@ -362,8 +367,52 @@ def get_applicants_for_vacancy(request, id):
             if (key == "_state"):
                 continue
             temp_result[key] = temp[key]
+        temp_result["skillset"] = applicant.applicant.skillset.names()
         result.append(temp_result)
     return Response({"applicants" : result}, status = 200)
+
+# Method to get all the vacancies which require similar skills which the user has.
+@api_view(["GET"])
+def search_matching_vacancies(request, username):
+    user = User.objects.get(username = username)
+    applicant = ApplicantInfoModel.objects.get(user = user)
+    vacancies = VacanciesInfoModel.objects.filter(skills__name__in = applicant.skillset.names()).distinct()
+    result = []
+    for vacancy in vacancies:
+        temp_result = {}
+        temp = vacancy.__dict__
+        # print (temp)
+        for key in temp:
+            # This state is the reference object to the college.
+            if (key == "_state"):
+                continue
+            temp_result[key] = temp[key]
+        temp_result["skills"] = vacancy.skills.names()
+        temp_result["college_name"] = vacancy.college.user.username
+        temp_result["location"] = vacancy.college.location
+        temp_result["website"] = vacancy.college.website
+        result.append(temp_result)
+    return Response({"vacancies" : result}, status = 200)
+
+
+# Method to search applicants based on the skills required by the vacancies.
+@api_view(["GET"])
+def search_matching_applicants(request, id):
+    vacancy = VacanciesInfoModel.objects.get(id = id)
+    applicants = ApplicantInfoModel.objects.filter(skillset__name__in = vacancy.skills.names()).distinct()
+    result = []
+    for applicant in applicants:
+        temp_result = {}
+        temp = applicant.__dict__
+        # print (temp)
+        for key in temp:
+            if (key == "_state"):
+                continue
+            temp_result[key] = temp[key]
+        temp_result["skillset"] = applicant.skillset.names()
+        result.append(temp_result)
+    return Response({"applicants" : result}, status = 200)
+    
 
 # DOCUMENTATION DONE!
 @api_view(["POST"])
@@ -389,14 +438,14 @@ class VacanciesAPIView(APIView):
         for vacancy in vacancies:
             temp_result = {}
             temp = vacancy.__dict__
-            # print (temp)
+            print (temp)
             for key in temp:
+                print (key)
                 # This state is the reference object to the college.
                 if (key == "_state"):
                     continue
-                if (key == "skills"):
-                    temp["skills"] = temp["skills"].split(" ")
                 temp_result[key] = temp[key]
+            temp_result["skills"] = vacancy.skills.names()
             temp_result["college_name"] = vacancy.college.user.username
             temp_result["location"] = vacancy.college.location
             temp_result["website"] = vacancy.college.website
@@ -408,9 +457,11 @@ class VacanciesAPIView(APIView):
         user = User.objects.get(username = college_name)
         college = CollegeInfoModel.objects.get(user = user)
         request.data["college"] = college
-        temp = " ".join(request.data["skills"])
-        request.data["skills"] = temp
-        VacanciesInfoModel.objects.create(**request.data)
+        temp = request.data["skills"]
+        del request.data["skills"]
+        vacancy = VacanciesInfoModel.objects.create(**request.data)
+        for skill in temp:
+            vacancy.skills.add(skill)
         return Response({"mssg": "Vacancy posted successfully!"}, status = 201)
 
     # Method to update the details of a particular vacancy using college name and id of the vacancy.
@@ -426,7 +477,9 @@ class VacanciesAPIView(APIView):
         vacancy.description = request.data["description"]
         vacancy.responsibilities = request.data["responsibilities"]
         vacancy.qualifications = request.data["qualifications"]
-        vacancy.skills = " ".join(request.data["skills"])
+        vacancy.skills.clear()
+        for skill in request.data["skills"]:
+            vacancy.skills.add(skill)
         vacancy.compensation = request.data["compensation"]
         vacancy.save()
         return Response({"mssg": "vacancy details updated successfully!"}, status = 204)

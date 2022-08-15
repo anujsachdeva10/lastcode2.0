@@ -32,5 +32,7 @@ urlpatterns = [
     path('api/vacancies/', views.VacanciesAPIView.as_view()),
     path('api/getuservacancies/<str:username>/', views.get_vacancies_for_applicant),
     path('api/getvacancyapplicants/<int:id>/', views.get_applicants_for_vacancy),
+    path('api/getmatchingvacancies/<str:username>/', views.search_matching_vacancies),
+    path('api/getmatchingapplicants/<int:id>/', views.search_matching_applicants),
     path('api/applyvacancy/<str:username>/', views.apply_for_vacancy),
 ]
