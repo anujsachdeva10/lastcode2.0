@@ -40,7 +40,6 @@ class ApplicantAPIView(APIView):
         else:
             return Response({"user" : temp_result, "mssg" : "Applicant profile not updated!"}, status = 403)
 
-
     # Posting the data of the applicant and user signup and login api.
     def post(self, request, format = None):
         if (request.data["purpose"] == "signup"):
@@ -112,17 +111,20 @@ class ApplicantAPIView(APIView):
 class CollegeAPIView(APIView):
     def get(self, request, username, format = None):
         user = User.objects.get(username = username)
-        college = CollegeInfoModel.objects.get(user = user)
-        temp_result = {}
-        temp_result["username"] = college.user.username
-        temp_result["email"] = college.user.email
-        temp_result["empid"] = college.empid
-        temp_result["location"] = college.location
-        temp_result["website"] = college.website
-        temp_result["director_mail"] = college.director_mail
-        temp_result["registrar_mail"] = college.registrar_mail
-        temp_result["hod_mail"] = college.hod_mail
-        return Response(temp_result, status = 200)  
+        if (CollegeInfoModel.objects.filter(user = user).exists()):
+            college = CollegeInfoModel.objects.get(user = user)
+            temp_result = {}
+            temp_result["username"] = college.user.username
+            temp_result["email"] = college.user.email
+            temp_result["empid"] = college.empid
+            temp_result["location"] = college.location
+            temp_result["website"] = college.website
+            temp_result["director_mail"] = college.director_mail
+            temp_result["registrar_mail"] = college.registrar_mail
+            temp_result["hod_mail"] = college.hod_mail
+            return Response(temp_result, status = 200)  
+        else:
+            return Response({"mssg" : "profile not updated!"}, status = 403)
 
     def post(self, request, format = None):
         if (request.data["purpose"] == "signup"):
