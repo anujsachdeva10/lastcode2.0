@@ -139,3 +139,4 @@ EMAIL_HOST_PASSWORD = 'kmlcmtzmkacqlmrh'
 EMAIL_USE_TLS = True
 
 TAGGIT_CASE_INSENSITIVE = True
+
