@@ -235,24 +235,24 @@ def get_employee_by_id(request, college_name, id):
 
 # DOCUMENTATION DONE!
 # this api is used to change the status of the employee from active to notice period and mail all the required faculties that recruitment process has been initiated.
-@api_view(["POST"])
-def Change_employee_status(request, college_name, id):
-    if (request.method == "POST"):
-        user = User.objects.get(username = college_name)
-        college = CollegeInfoModel.objects.get(user = user)
-        employee = EmployeeInfoModel.objects.get(college = college, id = id)
-        employee.status = request.data["status"]
-        employee.save()
-        message_name = "Initiate recruitment process"
-        message_email = "rapidrecruits1.0@gmail.com"
-        message = "Dear all, Mr./Mrs. {} is about to leave/retire from their position please initiate recruitment process".format(employee.name)
-        send_mail(
-            message_name,#subject
-            message,#message
-            message_email,#from email
-            [college.director_mail, college.registrar_mail, college.hod_mail, employee.email, college.user.email],#to email
-        )
-        return Response({"mssg": "status changed successfully!"}, status = 204)
+# @api_view(["POST"])
+# def Change_employee_status(request, college_name, id):
+#     if (request.method == "POST"):
+#         user = User.objects.get(username = college_name)
+#         college = CollegeInfoModel.objects.get(user = user)
+#         employee = EmployeeInfoModel.objects.get(college = college, id = id)
+#         employee.status = request.data["status"]
+#         employee.save()
+#         message_name = "Initiate recruitment process"
+#         message_email = "rapidrecruits1.0@gmail.com"
+#         message = "Dear all, Mr./Mrs. {} is about to leave/retire from their position please initiate recruitment process".format(employee.name)
+#         send_mail(
+#             message_name,#subject
+#             message,#message
+#             message_email,#from email
+#             [college.director_mail, college.registrar_mail, college.hod_mail, employee.email, college.user.email],#to email
+#         )
+#         return Response({"mssg": "status changed successfully!"}, status = 204)
     
 
 # DOCUMENTATION DONE!
@@ -286,6 +286,7 @@ class EmployeeAPIView(APIView):
             row = sheet_obj.max_row
             column = sheet_obj.max_column
             count = 0
+            print (row, column, sheet_obj.cell(row = 2, column = 1).value)
             keys = ["college", "name", "DOB", "gender", "category", "status", "email", "phone_number", "designation"]
             for i in range(2, row + 1): 
                 values = [college]
@@ -293,6 +294,8 @@ class EmployeeAPIView(APIView):
                     values.append(sheet_obj.cell(row = i, column = j).value)
                 comb_list = zip(keys, values)
                 data = dict(comb_list)
+                if (data["name"] == None):
+                    break
                 EmployeeInfoModel.objects.create(**data)
                 count += 1
             return Response({"mssg": "{} number of records created".format(count)}, status = 201)
@@ -315,6 +318,16 @@ class EmployeeAPIView(APIView):
         employee.phone_number = request.data["phone_number"]
         employee.designation = request.data["designation"]
         employee.save()
+        if (request.data["status"] == "Non Active"):
+            message_name = "Initiate recruitment process"
+            message_email = "rapidrecruits1.0@gmail.com"
+            message = "Dear all, Mr./Mrs. {} is about to leave/retire from their position please initiate recruitment process".format(employee.name)
+            send_mail(
+                message_name,#subject
+                message,#message
+                message_email,#from email
+                [college.director_mail, college.registrar_mail, college.hod_mail, employee.email, college.user.email],#to email
+            )
         return Response({"mssg": "employee details updated successfully"}, status = 204)
 
     # Method to delete the record of an employee using college name and id of the employee.
