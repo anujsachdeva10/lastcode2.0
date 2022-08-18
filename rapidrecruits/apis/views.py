@@ -643,7 +643,8 @@ class RecruitmentCommitteeAPIView(APIView):
         message_name = "Member of recruitement Committee"
         message_email = "rapidrecruits1.0@gmail.com"
         message = "Dear all, You have been added as the member of Recruitment Committee for the Vacancy {} , Vacancy Id {}".format(vacancy.title,vacancy.id)
-        send_mail(
+        send_mail
+        (
             message_name,#subject
             message,#message
             message_email,#from email
