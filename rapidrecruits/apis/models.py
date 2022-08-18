@@ -119,7 +119,7 @@ class VacancyApplicantMapping(models.Model):
         return self.applicant.username + " " + str(self.vacancy.id)
 
 
-class RecuitmentCommitteeInfoModel(models.Model):
+class RecruitmentCommitteeInfoModel(models.Model):
     first_user = models.ForeignKey(EmployeeInfoModel, on_delete=models.CASCADE, related_name = "first_member")
     second_user = models.ForeignKey(EmployeeInfoModel, on_delete=models.CASCADE, related_name = "second_member")
     third_user = models.ForeignKey(EmployeeInfoModel, on_delete=models.CASCADE, related_name = "third_member")

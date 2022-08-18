@@ -1,7 +1,7 @@
 from unicodedata import name
 from django.shortcuts import render
 
-from apis.models import ApplicantExperienceModel, ApplicantInfoModel, ApplicantQualificationModel, CollegeInfoModel, EmployeeInfoModel, VacanciesInfoModel, VacancyApplicantMapping
+from apis.models import ApplicantExperienceModel, ApplicantInfoModel, ApplicantQualificationModel, CollegeInfoModel, EmployeeInfoModel, VacanciesInfoModel, VacancyApplicantMapping, RecruitmentCommitteeInfoModel
 
 from django.contrib.auth.models import User
 from django.http import HttpResponse, JsonResponse
@@ -600,3 +600,53 @@ class ExperienceAPIView(APIView):
 
 #Send Email
 
+
+
+class RecruitmentCommitteeAPIView(APIView):
+    def get(self,request,college_name,id,format = None):
+        vacancy=VacanciesInfoModel.objects.get(id=id)
+        committee=RecruitmentCommitteeInfoModel.objects.get(vacancy=vacancy)
+        first_user = committee.first_user
+        second_user = committee.second_user
+        third_user = committee.third_user
+        fourth_user = committee.fourth_user
+        fifth_user = committee.fifth_user
+        # id,empid,name,designation,department
+        committee_members=[]
+        committee_members.append(first_user)
+        committee_members.append(second_user)
+        committee_members.append(third_user)
+        committee_members.append(fourth_user)
+        committee_members.append(fifth_user)
+        result = []
+        for member in committee_members:
+            temp_result = {}
+            temp_result["id"]=member.id
+            temp_result["empid"]=member.empid
+            temp_result["name"]=member.name
+            temp_result["designation"]=member.designation
+            temp_result["department"]=member.department
+            result.append(temp_result)
+        return Response({"data" : result}, status = 200)
+
+
+
+    def post(self,request,college_name,id,format = None):
+        first_user=EmployeeInfoModel.objects.get(id=request.data["first"])
+        second_user=EmployeeInfoModel.objects.get(id=request.data["second"])
+        third_user=EmployeeInfoModel.objects.get(id=request.data["third"])
+        fourth_user=EmployeeInfoModel.objects.get(id=request.data["forth"])
+        fifth_user=EmployeeInfoModel.objects.get(id=request.data["fifth"])
+        vacancy=VacanciesInfoModel.objects.get(id=id)
+        result={"first_user":first_user,"second_user":second_user,"third_user":third_user,"fourth_user":fourth_user,"fifth_user":fifth_user,"vacancy":vacancy}
+        RecruitmentCommitteeInfoModel.objects.create(**result)
+        message_name = "Member of recruitement Committee"
+        message_email = "rapidrecruits1.0@gmail.com"
+        message = "Dear all, You have been added as the member of Recruitment Committee for the Vacancy {} , Vacancy Id {}".format(vacancy.title,vacancy.id)
+        send_mail(
+            message_name,#subject
+            message,#message
+            message_email,#from email
+            [first_user.email,second_user.email,third_user.email,fourth_user.email,fifth_user.email,]#to email
+        )
+        return Response({"mssg" : "committee added successfully"}, status = 202)
