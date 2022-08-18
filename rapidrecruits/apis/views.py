@@ -237,12 +237,16 @@ def get_employee_by_id(request, college_name, id):
 @api_view(["GET"])
 def get_employee_by_empid(request, college_name, empid):
     if (request.method == "GET"):
+        print (college_name, empid)
         user = User.objects.get(username = college_name)
         college = CollegeInfoModel.objects.get(user = user)
-        employee = EmployeeInfoModel.objects.get(college = college, empid = empid)
-        temp_result = employee.__dict__
-        del temp_result["_state"]
-        return Response({"employee" : temp_result}, status = 200)
+        if (EmployeeInfoModel.objects.filter(college = college, empid = empid).exists()):
+            employee = EmployeeInfoModel.objects.get(college = college, empid = empid)
+            temp_result = employee.__dict__
+            del temp_result["_state"]
+            return Response({"employee" : temp_result}, status = 200)
+        else:
+            return Response({"mssg" : "employee does not exists!"}, status = 404)
 
 
 # DOCUMENTATION DONE!
