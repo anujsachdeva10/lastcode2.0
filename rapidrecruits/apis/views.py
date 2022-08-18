@@ -98,7 +98,7 @@ class ApplicantAPIView(APIView):
             user.save()
             applicant.save()
             return Response({"mssg" : "user updated successfully"}, status = 204)
-        else: 
+        else:
             return Response({"mssg : Personal Profile not updated!"}, status = 403)
 
     # Deleting user from the database.
@@ -122,7 +122,7 @@ class CollegeAPIView(APIView):
             temp_result["director_mail"] = college.director_mail
             temp_result["registrar_mail"] = college.registrar_mail
             temp_result["hod_mail"] = college.hod_mail
-            return Response(temp_result, status = 200)  
+            return Response(temp_result, status = 200)
         else:
             return Response({"mssg" : "profile not updated!"}, status = 403)
 
@@ -153,7 +153,7 @@ class CollegeAPIView(APIView):
             user = User.objects.get(username = request.data["username"])
             request.data["details"]["user"] = user
             CollegeInfoModel.objects.create(**request.data["details"])
-            return Response({"mssg": "data updated successfully!"}, status = 202)  
+            return Response({"mssg": "data updated successfully!"}, status = 202)
 
     def put(self, request, username, format = None):
         user = User.objects.get(username = username)
@@ -174,13 +174,13 @@ class CollegeAPIView(APIView):
         college = CollegeInfoModel.objects.get(user = user)
         user.delete()
         college.delete()
-        return Response({"mssg": "user delete successfully"}, status = 200)    
+        return Response({"mssg": "user delete successfully"}, status = 200)
 
 
 # DOCUMENTATION DONE!
 # Model for performing the CRUD operations on the user qualification.
 class QualificationAPIView(APIView):
-    
+
     # Method to get the qualifications of a particular applicant using username.
     def get(self, request, username, format = None):
         applicant = User.objects.get(username = username)
@@ -222,7 +222,7 @@ class QualificationAPIView(APIView):
 
 
 # DOCUMENTATION DONE!
-# Method to get the employee data using the college name and the employee id. We need to mention get in the square brackets else nothing will work. 
+# Method to get the employee data using the college name and the employee id. We need to mention get in the square brackets else nothing will work.
 @api_view(["GET"])
 def get_employee_by_id(request, college_name, id):
     if (request.method == "GET"):
@@ -269,7 +269,7 @@ def get_employee_by_empid(request, college_name, empid):
 #             [college.director_mail, college.registrar_mail, college.hod_mail, employee.email, college.user.email],#to email
 #         )
 #         return Response({"mssg": "status changed successfully!"}, status = 204)
-    
+
 
 # DOCUMENTATION DONE!
 class EmployeeAPIView(APIView):
@@ -297,14 +297,14 @@ class EmployeeAPIView(APIView):
         user = User.objects.get(username = college_name)
         college = CollegeInfoModel.objects.get(user = user)
         if (request.data["method"] == "excel file"):
-            wb_obj = openpyxl.load_workbook(request.FILES["details"]) 
-            sheet_obj = wb_obj.active 
+            wb_obj = openpyxl.load_workbook(request.FILES["details"])
+            sheet_obj = wb_obj.active
             row = sheet_obj.max_row
             column = sheet_obj.max_column
             count = 0
             print (row, column, sheet_obj.cell(row = 2, column = 1).value)
             keys = ["college", "empid", "name", "DOB", "gender", "category", "status", "designation", "department", "email", "phone_number"]
-            for i in range(2, row + 1): 
+            for i in range(2, row + 1):
                 values = [college]
                 for j in range(1, column + 1):
                     values.append(sheet_obj.cell(row = i, column = j).value)
@@ -448,7 +448,7 @@ def search_matching_applicants(request, id):
         temp_result["skillset"] = applicant.skillset.names()
         result.append(temp_result)
     return Response({"applicants" : result}, status = 200)
-    
+
 
 # DOCUMENTATION DONE!
 @api_view(["POST"])
@@ -458,7 +458,7 @@ def apply_for_vacancy(request, username):
     del request.data["id"]
     VacancyApplicantMapping.objects.create(**request.data)
     return Response({"mssg" : "Applied for the vacancy successfully!"}, status = 200)
-            
+
 
 # DOCUMENTATION DONE!
 class VacanciesAPIView(APIView):
@@ -527,10 +527,10 @@ class VacanciesAPIView(APIView):
         vacancy = VacanciesInfoModel.objects.get(college = college, id = request.data["id"])
         vacancy.delete()
         return Response({"mssg": "Vacancy deleted successfully!"}, status = 200)
-        
+
 
 class ExperienceAPIView(APIView):
-    
+
     def get(self, request, username, format = None):
         applicant = User.objects.get(username = username)
         experiences = ApplicantExperienceModel.objects.filter(applicant = applicant)
@@ -578,7 +578,7 @@ class ExperienceAPIView(APIView):
         #     result = []
         #     for applicant in applicants:
         #         temp_result = {}
-        #         temp_result["id"] = 
+        #         temp_result["id"] =
         #         temp_result["username"] = applicant.user.username
         #         temp_result["email"] = applicant.user.email
         #         temp_result["description"] = applicant.description
