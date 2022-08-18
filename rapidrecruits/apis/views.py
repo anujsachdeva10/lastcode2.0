@@ -193,7 +193,7 @@ class QualificationAPIView(APIView):
             temp_result["passing_year"] = qualification.passing_year
             temp_result["marks"] = qualification.marks
             result.append(temp_result)
-        return Response(result, status = 200)
+        return Response({"data" : result}, status = 200)
 
     # Posting the qualifications of an applicant using the username of the applicant.
     def post(self, request, username, format = None):
@@ -232,6 +232,18 @@ def get_employee_by_id(request, college_name, id):
         temp_result = employee.__dict__
         del temp_result["_state"]
         return Response({"employee" : temp_result}, status = 200)
+
+
+@api_view(["GET"])
+def get_employee_by_empid(request, college_name, empid):
+    if (request.method == "GET"):
+        user = User.objects.get(username = college_name)
+        college = CollegeInfoModel.objects.get(user = user)
+        employee = EmployeeInfoModel.objects.get(college = college, empid = empid)
+        temp_result = employee.__dict__
+        del temp_result["_state"]
+        return Response({"employee" : temp_result}, status = 200)
+
 
 # DOCUMENTATION DONE!
 # this api is used to change the status of the employee from active to notice period and mail all the required faculties that recruitment process has been initiated.
@@ -287,7 +299,7 @@ class EmployeeAPIView(APIView):
             column = sheet_obj.max_column
             count = 0
             print (row, column, sheet_obj.cell(row = 2, column = 1).value)
-            keys = ["college", "name", "DOB", "gender", "category", "status", "email", "phone_number", "designation"]
+            keys = ["college", "empid", "name", "DOB", "gender", "category", "status", "designation", "department", "email", "phone_number"]
             for i in range(2, row + 1): 
                 values = [college]
                 for j in range(1, column + 1):
@@ -309,6 +321,9 @@ class EmployeeAPIView(APIView):
         user = User.objects.get(username = college_name)
         college = CollegeInfoModel.objects.get(user = user)
         employee = EmployeeInfoModel.objects.get(college = college, id = request.data["id"])
+        flag = 0
+        if (employee.status == "Non Active"):
+            flag = 1
         employee.name = request.data["name"]
         employee.DOB = request.data["DOB"]
         employee.gender = request.data["gender"]
@@ -317,8 +332,10 @@ class EmployeeAPIView(APIView):
         employee.email = request.data["email"]
         employee.phone_number = request.data["phone_number"]
         employee.designation = request.data["designation"]
+        employee.empid = request.data["empid"]
+        employee.department = request.data["department"]
         employee.save()
-        if (request.data["status"] == "Non Active"):
+        if (request.data["status"] == "Non Active" and flag == 0):
             message_name = "Initiate recruitment process"
             message_email = "rapidrecruits1.0@gmail.com"
             message = "Dear all, Mr./Mrs. {} is about to leave/retire from their position please initiate recruitment process".format(employee.name)
