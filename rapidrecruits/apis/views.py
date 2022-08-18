@@ -290,6 +290,7 @@ class EmployeeAPIView(APIView):
                     continue
                 temp_result[key] = temp[key]
             result.append(temp_result)
+        result = sorted(result, key = lambda x : x["name"].lower())
         return Response({"employees" : result}, status = 200)
 
     # Method to post the data of the employees of a college using excel sheet or by using manual method using college name.
@@ -448,6 +449,24 @@ def search_matching_applicants(request, id):
         temp_result["skillset"] = applicant.skillset.names()
         result.append(temp_result)
     return Response({"applicants" : result}, status = 200)
+
+
+@api_view(["GET"])
+def get_vacancy_by_id(request, id):
+    vacancy = VacanciesInfoModel.objects.get(id = id)
+    temp_result = {}
+    temp = vacancy.__dict__
+    # print (temp)
+    for key in temp:
+        # This state is the reference object to the college.
+        if (key == "_state"):
+            continue
+        temp_result[key] = temp[key]
+    temp_result["skills"] = vacancy.skills.names()
+    temp_result["college_name"] = vacancy.college.user.username
+    temp_result["location"] = vacancy.college.location
+    temp_result["website"] = vacancy.college.website
+    return Response({"vacancy" : temp_result}, status = 200)
 
 
 # DOCUMENTATION DONE!
