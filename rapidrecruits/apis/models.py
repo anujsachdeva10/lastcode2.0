@@ -80,11 +80,15 @@ class EmployeeInfoModel(models.Model):
     gender = models.CharField(max_length = 10, blank = False)
     category = models.CharField(default = "", max_length = 20, blank = True)
     status = models.CharField(max_length = 15, blank = True, null = True)
-    # empid = models.CharField(default = "0000", max_length = 15, blank = True, null = True)
+    empid = models.CharField(max_length = 15, blank = True, null = True)
     email = models.CharField(max_length = 30, blank = False)
     phone_number = models.PositiveSmallIntegerField(default = 0, null = True)
     # Desgination Details.
-    designation = models.CharField(max_length = 250, blank = False)
+    designation = models.CharField(max_length = 250, blank = True, null = True)
+    department = models.CharField(max_length = 250, blank = True, null = True)
+
+    class Meta:
+        unique_together = ('college', 'empid')
 
     def __str__(self):
         return self.name
@@ -110,7 +114,7 @@ class VacanciesInfoModel(models.Model):
 class VacancyApplicantMapping(models.Model):
     applicant = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "applied_vacancies")
     vacancy = models.ForeignKey(VacanciesInfoModel, on_delete = models.CASCADE, related_name = "existing_applicants")
-
+    status = models.CharField(max_length = 100, blank = True, null = True)
     def __str__(self):
         return self.applicant.username + " " + str(self.vacancy.id)
 
