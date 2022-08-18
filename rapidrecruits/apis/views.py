@@ -522,7 +522,7 @@ class ExperienceAPIView(APIView):
             temp_result["institute"] = experience.institute
             temp_result["details"] = experience.details
             result.append(temp_result)
-        return Response(result, status = 200)
+        return Response({"data" : result}, status = 200)
 
     def post(self, request, username, format = None):
         user = User.objects.get(username = username)
