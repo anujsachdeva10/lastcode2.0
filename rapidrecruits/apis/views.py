@@ -470,6 +470,10 @@ def get_vacancy_by_id(request, id):
     temp_result["college_name"] = vacancy.college.user.username
     temp_result["location"] = vacancy.college.location
     temp_result["website"] = vacancy.college.website
+    flag = False
+    if (RecruitmentCommitteeInfoModel.objects.filter(vacancy = vacancy).exists()):
+        flag = True 
+    temp_result ["recruitment_committee"] = flag
     return Response({"vacancy" : temp_result}, status = 200)
 
 
