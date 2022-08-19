@@ -413,6 +413,7 @@ def get_applicants_for_vacancy(request, id):
             if (key == "_state"):
                 continue
             personal_details_dict[key] = temp[key]
+        personal_details_dict["skillset"] = personal_info_obj.skillset.names()
         applicant_info_dict["personal details"] = personal_details_dict
         # Getting the qualifications of the applicant.
         qualifications = ApplicantQualificationModel.objects.filter(applicant = applicant)
@@ -468,18 +469,49 @@ def search_matching_vacancies(request, username):
 @api_view(["GET"])
 def search_matching_applicants(request, id):
     vacancy = VacanciesInfoModel.objects.get(id = id)
-    applicants = ApplicantInfoModel.objects.filter(skillset__name__in = vacancy.skills.names()).distinct()
+    applicants_obj = ApplicantInfoModel.objects.filter(skillset__name__in = vacancy.skills.names()).distinct()
+    applicants = []
+    for applicant_obj in applicants_obj:
+        applicants.append(User.objects.get(username = applicant_obj.user.username))
     result = []
     for applicant in applicants:
-        temp_result = {}
-        temp = applicant.__dict__
-        # print (temp)
+        applicant_info_dict = {}
+        personal_details_dict = {}
+        personal_details_dict["username"] = applicant.username
+        personal_details_dict["email"] = applicant.email
+        # Getting the personal information of the applicant.
+        personal_info_obj = ApplicantInfoModel.objects.get(user = applicant)
+        temp = personal_info_obj.__dict__
         for key in temp:
             if (key == "_state"):
                 continue
-            temp_result[key] = temp[key]
-        temp_result["skillset"] = applicant.skillset.names()
-        result.append(temp_result)
+            personal_details_dict[key] = temp[key]
+        applicant_info_dict["personal details"] = personal_details_dict
+        personal_details_dict["skillset"] = personal_info_obj.skillset.names()
+        # Getting the qualifications of the applicant.
+        qualifications = ApplicantQualificationModel.objects.filter(applicant = applicant)
+        all_qualifications = []
+        for qualification in qualifications:
+            temp_qualification = {}
+            temp_qualification["qualification_title"] = qualification.qualification_title
+            temp_qualification["institute"] = qualification.institute
+            temp_qualification["passing_year"] = qualification.passing_year
+            temp_qualification["marks"] = qualification.marks
+            all_qualifications.append(temp_qualification)
+        applicant_info_dict["qualification details"] = all_qualifications
+        # Getting the experience of the applicant.
+        experiences = ApplicantExperienceModel.objects.filter(applicant = applicant)
+        all_experiences = []
+        for experience in experiences:
+            temp_experience = {}
+            temp_experience["designation"] = experience.designation
+            temp_experience["from_date"] = experience.from_date
+            temp_experience["to_date"] = experience.to_date
+            temp_experience["institute"] = experience.institute
+            temp_experience["details"] = experience.details
+            all_experiences.append(temp_experience)
+        applicant_info_dict["experience details"] = all_experiences
+        result.append(applicant_info_dict)
     return Response({"applicants" : result}, status = 200)
 
 
