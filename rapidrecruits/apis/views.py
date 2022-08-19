@@ -24,6 +24,7 @@ class ApplicantAPIView(APIView):
         temp_result["email"] = user.email
         if (ApplicantInfoModel.objects.filter(user = user).exists()):
             applicant = ApplicantInfoModel.objects.get(user = user)
+            temp_result["profile_pic"] = applicant.profile_pic
             temp_result["description"] = applicant.description
             temp_result["full_name"] = applicant.full_name
             temp_result["DOB"] = applicant.DOB
@@ -36,6 +37,7 @@ class ApplicantAPIView(APIView):
             temp_result["phone_number"] = applicant.phone_number
             temp_result["total_experience"] = applicant.total_experience
             temp_result["skillset"] = applicant.skillset.names()
+            temp_result["resume"] = applicant.resume
             return Response(temp_result, status = 200)
         else:
             return Response({"user" : temp_result, "mssg" : "Applicant profile not updated!"}, status = 403)
@@ -81,6 +83,7 @@ class ApplicantAPIView(APIView):
         if (ApplicantInfoModel.objects.filter(user = user).exists()):
             applicant = ApplicantInfoModel.objects.get(user = user)
             user.email = request.data.get("email")
+            applicant.profile_pic = request.data.get("profile_pic")
             applicant.description = request.data.get("description")
             applicant.full_name = request.data.get("full_name")
             applicant.DOB = request.data.get("DOB")
@@ -95,6 +98,7 @@ class ApplicantAPIView(APIView):
             applicant.skillset.clear()
             for skill in request.data["skillset"]:
                 applicant.skillset.add(skill)
+            applicant.resume = request.data.get("resume")
             user.save()
             applicant.save()
             return Response({"mssg" : "user updated successfully"}, status = 204)
