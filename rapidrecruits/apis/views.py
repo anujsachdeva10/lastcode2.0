@@ -398,18 +398,44 @@ def get_applicants_for_vacancy(request, id):
     applicants = []
     for mapping in mappings:
         applicants.append(mapping.applicant)
-        # print (mapping)
     result = []
     for applicant in applicants:
-        temp_result = {}
-        temp = applicant.__dict__
-        # print (temp)
+        applicant_info_dict = {}
+        personal_details_dict = {}
+        personal_details_dict["username"] = applicant.username
+        personal_details_dict["email"] = applicant.email
+        # Getting the personal information of the applicant.
+        personal_info_obj = ApplicantInfoModel.objects.get(user = applicant)
+        temp = personal_info_obj.__dict__
         for key in temp:
             if (key == "_state"):
                 continue
-            temp_result[key] = temp[key]
-        temp_result["skillset"] = applicant.applicant.skillset.names()
-        result.append(temp_result)
+            personal_details_dict[key] = temp[key]
+        applicant_info_dict["personal details"] = personal_details_dict
+        # Getting the qualifications of the applicant.
+        qualifications = ApplicantQualificationModel.objects.filter(applicant = applicant)
+        all_qualifications = []
+        for qualification in qualifications:
+            temp_qualification = {}
+            temp_qualification["qualification_title"] = qualification.qualification_title
+            temp_qualification["institute"] = qualification.institute
+            temp_qualification["passing_year"] = qualification.passing_year
+            temp_qualification["marks"] = qualification.marks
+            all_qualifications.append(temp_qualification)
+        applicant_info_dict["qualification details"] = all_qualifications
+        # Getting the experience of the applicant.
+        experiences = ApplicantExperienceModel.objects.filter(applicant = applicant)
+        all_experiences = []
+        for experience in experiences:
+            temp_experience = {}
+            temp_experience["designation"] = experience.designation
+            temp_experience["from_date"] = experience.from_date
+            temp_experience["to_date"] = experience.to_date
+            temp_experience["institute"] = experience.institute
+            temp_experience["details"] = experience.details
+            all_experiences.append(temp_experience)
+        applicant_info_dict["experience details"] = all_experiences
+        result.append(applicant_info_dict)
     return Response({"applicants" : result}, status = 200)
 
 # Method to get all the vacancies which require similar skills which the user has.
@@ -512,6 +538,10 @@ class VacanciesAPIView(APIView):
             temp_result["college_name"] = vacancy.college.user.username
             temp_result["location"] = vacancy.college.location
             temp_result["website"] = vacancy.college.website
+            flag = False
+            if (RecruitmentCommitteeInfoModel.objects.filter(vacancy = vacancy).exists()):
+                flag = True 
+            temp_result ["recruitment_committee"] = flag
             result.append(temp_result)
         return Response({"vacancies" : result}, status = 200)
 
