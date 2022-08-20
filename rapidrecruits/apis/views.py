@@ -12,7 +12,6 @@ import openpyxl
 from rest_framework.decorators import api_view
 from django.core.mail import send_mail
 from django.views.decorators.csrf import csrf_exempt
-import datetime
 from datetime import *
 # Create your views here.
 
@@ -296,6 +295,31 @@ class EmployeeAPIView(APIView):
                     continue
                 temp_result[key] = temp[key]
             result.append(temp_result)
+            dob_year = (datetime.strptime(employee.DOB,"%d/%m/%Y")).year
+            dob_month = (datetime.strptime(employee.DOB,"%d/%m/%Y")).month
+            dob_date = (datetime.strptime(employee.DOB,"%d/%m/%Y")).day
+            # print(dob_year,dob_date,dob_month,date.today().year,date.today().day,date.today().month)
+            if dob_month >=1 and dob_month<=3 and date.today().day == dob_date and date.today().year == dob_year + 59 and date.today().month == dob_month + 9 :
+                message_name = "Initiate recruitment process"
+                message_email = "rapidrecruits1.0@gmail.com"
+                message = "Dear all, Mr./Mrs. {} is about to leave/retire from their position please initiate recruitment process".format(employee.name)
+                send_mail(
+                    message_name,#subject
+                    message,#message
+                    message_email,#from email
+                    [college.director_mail, college.registrar_mail, college.hod_mail, employee.email, college.user.email],#to email
+                )
+            elif dob_month >=4 and dob_month<=12 and date.today().day == dob_date and date.today().year == dob_year + 60 and date.today().month == dob_month - 3:
+                message_name = "Initiate recruitment process"
+                message_email = "rapidrecruits1.0@gmail.com"
+                message = "Dear all, Mr./Mrs. {} is about to leave/retire from their position please initiate recruitment process".format(employee.name)
+                send_mail(
+                    message_name,#subject
+                    message,#message
+                    message_email,#from email
+                    [college.director_mail, college.registrar_mail, college.hod_mail, employee.email, college.user.email],#to email
+                )
+
         result = sorted(result, key = lambda x : x["name"].lower())
         return Response({"employees" : result}, status = 200)
 
