@@ -367,7 +367,7 @@ class EmployeeAPIView(APIView):
         return Response({"mssg": "employee deleted successfully!"}, status = 200)
 
 # DOCUMENTATION DONE!
-# Method to get the vacancies for a particular applicant using applicant username.
+# Method to get the vacancies for a particular applicant where the applicant has applied.
 @api_view(["GET"])
 def get_vacancies_for_applicant(request, username):
     user = User.objects.get(username = username)
@@ -393,13 +393,15 @@ def get_vacancies_for_applicant(request, username):
     return Response({"vacancies" : result}, status = 200)
 
 # DOCUMENTATION DONE!
-# Method to get the applicants for a particular vacancy using vacancy id.
+# Method to get the applicants who have applied for a particular vacancy using vacancy id.
 @api_view(["GET"])
 def get_applicants_for_vacancy(request, id):
     mappings = VacancyApplicantMapping.objects.filter(vacancy = id)
     applicants = []
+    status = {}
     for mapping in mappings:
         applicants.append(mapping.applicant)
+        status[mapping.applicant] = mapping.status
     result = []
     for applicant in applicants:
         applicant_info_dict = {}
@@ -438,6 +440,8 @@ def get_applicants_for_vacancy(request, id):
             temp_experience["details"] = experience.details
             all_experiences.append(temp_experience)
         applicant_info_dict["experience details"] = all_experiences
+        # Getting the status of employee for the vacancy.
+        applicant_info_dict["status"] = status[applicant]
         result.append(applicant_info_dict)
     return Response({"applicants" : result}, status = 200)
 
@@ -542,11 +546,24 @@ def get_vacancy_by_id(request, id):
 def apply_for_vacancy(request, username):
     request.data["applicant"] = User.objects.get(username = username)
     request.data["vacancy"] = VacanciesInfoModel.objects.get(id = request.data["id"])
+    request.data["status"] = "under review"
     del request.data["id"]
     VacancyApplicantMapping.objects.create(**request.data)
     return Response({"mssg" : "Applied for the vacancy successfully!"}, status = 200)
 
 
+# Using this function we can change acncstatus of the applicant for a particular vacacncy.
+@api_view(["PUT"])
+def change_status_of_applicant(request, id, username):
+    vacancy = VacanciesInfoModel.objects.get(id = id)
+    applicant = User.objects.get(username = username)
+    mapping = VacancyApplicantMapping.objects.get(vacancy = vacancy, applicant = applicant)
+    mapping.status = request.data["status"]
+    mapping.save()
+    return Response({"mssg" : "Status updated successfully"}, status = 200)
+
+
+# Using this API we can approach the applicant we are interested in.
 @api_view(["POST"])
 def approach_applicant(request, username):
     user = User.objects.get(username = username)
@@ -781,3 +798,5 @@ class RecruitmentCommitteeAPIView(APIView):
             [first_user.email,second_user.email,third_user.email,fourth_user.email,fifth_user.email,]#to email
         )
         return Response({"mssg" : "committee updated successfully"}, status = 204)
+
+
