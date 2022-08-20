@@ -14,6 +14,18 @@ from django.core.mail import send_mail
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
+
+@api_view(["GET"])
+def dashboard_view(request, username):
+    user = User.objects.get(username = username)
+    college = CollegeInfoModel.objects.get(user = user)
+    employee_count = EmployeeInfoModel.objects.filter(college = college).count()
+    vacancies_count = VacanciesInfoModel.objects.filter(college = college).count()
+    active_employee_count = EmployeeInfoModel.objects.filter(college = college, status = "Active").count()
+    non_active_employee_count = EmployeeInfoModel.objects.filter(college = college, status = "Non Active").count()
+    return Response({"employee_count": employee_count, "vacancies_count": vacancies_count, "active_employee_count": active_employee_count, "non_active_employee_count": non_active_employee_count}, status = 200)
+
+
 # DOCUMENTATION DONE!
 class ApplicantAPIView(APIView):
     # Method to fetch the details of an applicant using username.
