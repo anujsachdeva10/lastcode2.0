@@ -39,5 +39,6 @@ urlpatterns = [
     path('api/getmatchingapplicants/<int:id>/', views.search_matching_applicants),
     path('api/applyvacancy/<str:username>/', views.apply_for_vacancy),
     path('api/approachapplicant/<str:username>/', views.approach_applicant),
-    path('api/changestatus/<int:id>/<str:username>/', views.change_status_of_applicant)
+    path('api/changestatus/<int:id>/<str:username>/', views.change_status_of_applicant),
+    path('api/home/<str:username>/', views.dashboard_view),
 ]
