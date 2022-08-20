@@ -572,7 +572,7 @@ def get_vacancy_by_id(request, id):
     temp_result["website"] = vacancy.college.website
     flag = False
     if (RecruitmentCommitteeInfoModel.objects.filter(vacancy = vacancy).exists()):
-        flag = True 
+        flag = True
     temp_result ["recruitment_committee"] = flag
     return Response({"vacancy" : temp_result}, status = 200)
 
@@ -645,7 +645,7 @@ class VacanciesAPIView(APIView):
             temp_result["website"] = vacancy.college.website
             flag = False
             if (RecruitmentCommitteeInfoModel.objects.filter(vacancy = vacancy).exists()):
-                flag = True 
+                flag = True
             temp_result ["recruitment_committee"] = flag
             result.append(temp_result)
         return Response({"vacancies" : result}, status = 200)
