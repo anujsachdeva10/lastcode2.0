@@ -642,12 +642,23 @@ class VacanciesAPIView(APIView):
     def post(self, request, college_name, format = None):
         user = User.objects.get(username = college_name)
         college = CollegeInfoModel.objects.get(user = user)
+        employees = EmployeeInfoModel.objects.filter(college = college)
         request.data["college"] = college
         temp = request.data["skills"]
         del request.data["skills"]
         vacancy = VacanciesInfoModel.objects.create(**request.data)
         for skill in temp:
             vacancy.skills.add(skill)
+        for employee in employees:
+            message_name = "Vacancy Created"
+            message_email = "rapidrecruits1.0@gmail.com"
+            message = "Dear all, Vacancy for {} has been created".format(vacancy.title)
+            send_mail(
+                message_name,#subject
+                message,#message
+                message_email,#from email
+                [employees.email],#to email   
+            )
         return Response({"mssg": "Vacancy posted successfully!"}, status = 201)
 
     # Method to update the details of a particular vacancy using college name and id of the vacancy.
