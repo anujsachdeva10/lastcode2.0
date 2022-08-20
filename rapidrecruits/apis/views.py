@@ -547,6 +547,24 @@ def apply_for_vacancy(request, username):
     return Response({"mssg" : "Applied for the vacancy successfully!"}, status = 200)
 
 
+@api_view(["POST"])
+def approach_applicant(request, username):
+    user = User.objects.get(username = username)
+    emailid = user.email
+    # print (user.email)
+    link = request.data["link"]
+    vacancy_id = request.data["id"]
+    message_name = "Member of recruitement Committee"
+    message_email = "rapidrecruits1.0@gmail.com"
+    message = "Your profile looks suitable for this vacancy. If interested please apply at the link {} , Vacancy Id {}".format(link, vacancy_id)
+    send_mail (
+        message_name,#subject
+        message,#message
+        message_email,#from email
+        [emailid]#to email
+    )
+    return Response({"mssg": "mail sent successfully"}, status = 200)
+
 # DOCUMENTATION DONE!
 class VacanciesAPIView(APIView):
 
@@ -691,10 +709,8 @@ class ExperienceAPIView(APIView):
 
 #Send Email
 
-
-
 class RecruitmentCommitteeAPIView(APIView):
-    def get(self,request,college_name,id,format = None):
+    def get(self, request, college_name, id, format = None):
         vacancy=VacanciesInfoModel.objects.get(id=id)
         committee=RecruitmentCommitteeInfoModel.objects.get(vacancy=vacancy)
         first_user = committee.first_user
@@ -721,7 +737,6 @@ class RecruitmentCommitteeAPIView(APIView):
         return Response({"data" : result}, status = 200)
 
 
-
     def post(self,request,college_name,id,format = None):
         first_user=EmployeeInfoModel.objects.get(id=request.data["first"])
         second_user=EmployeeInfoModel.objects.get(id=request.data["second"])
@@ -742,3 +757,27 @@ class RecruitmentCommitteeAPIView(APIView):
             [first_user.email,second_user.email,third_user.email,fourth_user.email,fifth_user.email,]#to email
         )
         return Response({"mssg" : "committee added successfully"}, status = 202)
+
+
+    def put(self, request, college_name, id, format = None):
+        first_user = EmployeeInfoModel.objects.get(id = request.data["first"])
+        second_user = EmployeeInfoModel.objects.get(id = request.data["second"])
+        third_user = EmployeeInfoModel.objects.get(id = request.data["third"])
+        fourth_user = EmployeeInfoModel.objects.get(id = request.data["forth"])
+        fifth_user = EmployeeInfoModel.objects.get(id = request.data["fifth"])
+        vacancy = VacanciesInfoModel.objects.get(id = id)
+        recruitment_committee = RecruitmentCommitteeInfoModel.objects.get(vacancy = vacancy)
+        recruitment_committee.delete()
+        result={"first_user" : first_user, "second_user" : second_user, "third_user" : third_user, "fourth_user" : fourth_user, "fifth_user" : fifth_user, "vacancy" : vacancy}
+        RecruitmentCommitteeInfoModel.objects.create(**result)
+        message_name = "Member of recruitement Committee"
+        message_email = "rapidrecruits1.0@gmail.com"
+        message = "Dear all, You have been added as the member of Recruitment Committee for the Vacancy {} , Vacancy Id {}".format(vacancy.title,vacancy.id)
+        send_mail
+        (
+            message_name,#subject
+            message,#message
+            message_email,#from email
+            [first_user.email,second_user.email,third_user.email,fourth_user.email,fifth_user.email,]#to email
+        )
+        return Response({"mssg" : "committee updated successfully"}, status = 204)
