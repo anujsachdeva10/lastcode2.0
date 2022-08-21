@@ -924,5 +924,3 @@ class RecruitmentCommitteeAPIView(APIView):
             [first_user.email,second_user.email,third_user.email,fourth_user.email,fifth_user.email]#to email
         )
         return Response({"mssg" : "committee updated successfully"}, status = 204)
-
-
