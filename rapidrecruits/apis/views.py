@@ -596,7 +596,7 @@ def change_status_of_applicant(request, id, username):
     mapping = VacancyApplicantMapping.objects.get(vacancy = vacancy, applicant = applicant)
     mapping.status = request.data["status"]
     mapping.save()
-    if(mapping.status == "Rejected"):
+    if(mapping.status == "rejected"):
         message_name = "Sorry"
         message_email = "rapidrecruits1.0@gmail.com"
         message = "Rejected"
@@ -606,7 +606,7 @@ def change_status_of_applicant(request, id, username):
             message_email,#from email
             [applicant.email]#to email
         )
-    elif(mapping.status == "Hired"):
+    elif(mapping.status == "hired"):
         message_name = "Congratulations"
         message_email = "rapidrecruits1.0@gmail.com"
         message = "Selected"
@@ -616,7 +616,7 @@ def change_status_of_applicant(request, id, username):
             message_email,#from email
             [applicant.email]#to email
         )
-    elif(mapping.status == "Meet Scheduled"):
+    elif(mapping.status == "meet scheduled"):
         message_name = "Meeting Scheduled"
         message_email = "rapidrecruits1.0@gmail.com"
         message = "Congratulations ,  you are shortlisted. Meeting details is shared below "
