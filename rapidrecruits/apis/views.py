@@ -596,6 +596,36 @@ def change_status_of_applicant(request, id, username):
     mapping = VacancyApplicantMapping.objects.get(vacancy = vacancy, applicant = applicant)
     mapping.status = request.data["status"]
     mapping.save()
+    if(mapping.status == "rejected"):
+        message_name = "Sorry"
+        message_email = "rapidrecruits1.0@gmail.com"
+        message = "Rejected"
+        send_mail(
+            message_name,#subject
+            message,#message
+            message_email,#from email
+            [applicant.email]#to email
+        )
+    elif(mapping.status == "hired"):
+        message_name = "Congratulations"
+        message_email = "rapidrecruits1.0@gmail.com"
+        message = "Selected"
+        send_mail(
+            message_name,#subject
+            message,#message
+            message_email,#from email
+            [applicant.email]#to email
+        )
+    elif(mapping.status == "meet scheduled"):
+        message_name = "Meeting Scheduled"
+        message_email = "rapidrecruits1.0@gmail.com"
+        message = "Congratulations ,  you are shortlisted. Meeting details is shared below "
+        send_mail(
+            message_name,#subject
+            message,#message
+            message_email,#from email
+            [applicant.email]#to email
+        )
     return Response({"mssg" : "Status updated successfully"}, status = 200)
 
 
@@ -669,7 +699,7 @@ class VacanciesAPIView(APIView):
                 message_name,#subject
                 message,#message
                 message_email,#from email
-                [employees.email],#to email
+                [employee.email],#to email   
             )
         return Response({"mssg": "Vacancy posted successfully!"}, status = 201)
 
@@ -813,8 +843,7 @@ class RecruitmentCommitteeAPIView(APIView):
         message_name = "Member of recruitement Committee"
         message_email = "rapidrecruits1.0@gmail.com"
         message = "Dear all, You have been added as the member of Recruitment Committee for the Vacancy {} , Vacancy Id {}".format(vacancy.title,vacancy.id)
-        send_mail
-        (
+        send_mail(
             message_name,#subject
             message,#message
             message_email,#from email
@@ -837,12 +866,11 @@ class RecruitmentCommitteeAPIView(APIView):
         message_name = "Member of recruitement Committee"
         message_email = "rapidrecruits1.0@gmail.com"
         message = "Dear all, You have been added as the member of Recruitment Committee for the Vacancy {} , Vacancy Id {}".format(vacancy.title,vacancy.id)
-        send_mail
-        (
+        send_mail(
             message_name,#subject
             message,#message
             message_email,#from email
-            [first_user.email,second_user.email,third_user.email,fourth_user.email,fifth_user.email,]#to email
+            [first_user.email,second_user.email,third_user.email,fourth_user.email,fifth_user.email]#to email
         )
         return Response({"mssg" : "committee updated successfully"}, status = 204)
 
