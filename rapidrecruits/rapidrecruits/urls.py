@@ -37,6 +37,7 @@ urlpatterns = [
     path('api/getvacancyapplicants/<int:id>/', views.get_applicants_for_vacancy),
     path('api/getmatchingvacancies/<str:username>/', views.search_matching_vacancies),
     path('api/getmatchingapplicants/<int:id>/', views.search_matching_applicants),
+    path('api/get_all_vacancies_for_applicant/<str:username>/', views.get_all_vacancies_for_applicant),
     path('api/applyvacancy/<str:username>/', views.apply_for_vacancy),
     path('api/approachapplicant/<str:username>/', views.approach_applicant),
     path('api/changestatus/<int:id>/<str:username>/', views.change_status_of_applicant),

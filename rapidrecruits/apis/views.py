@@ -406,7 +406,7 @@ class EmployeeAPIView(APIView):
 @api_view(["GET"])
 def get_vacancies_for_applicant(request, username):
     user = User.objects.get(username = username)
-    mappings = VacancyApplicantMapping.objects.filter(applicant = user)
+    mappings = VacancyApplicantMapping.objects.filter(applicant = user).order_by('date_of_application')
     vacancies = []
     for mapping in mappings:
         vacancies.append(mapping.vacancy)
@@ -431,7 +431,7 @@ def get_vacancies_for_applicant(request, username):
 # Method to get the applicants who have applied for a particular vacancy using vacancy id.
 @api_view(["GET"])
 def get_applicants_for_vacancy(request, id):
-    mappings = VacancyApplicantMapping.objects.filter(vacancy = id)
+    mappings = VacancyApplicantMapping.objects.filter(vacancy = id).order_by('date_of_application')
     applicants = []
     status = {}
     for mapping in mappings:
@@ -480,12 +480,20 @@ def get_applicants_for_vacancy(request, id):
         result.append(applicant_info_dict)
     return Response({"applicants" : result}, status = 200)
 
-# Method to get all the vacancies which require similar skills which the user has.
+
+# Method to get all the vacancies which require similar skills which the user has removed already applied vacancies..
 @api_view(["GET"])
 def search_matching_vacancies(request, username):
     user = User.objects.get(username = username)
     applicant = ApplicantInfoModel.objects.get(user = user)
+    # Here, we are getting the id's of the vacancies which the applicant has already applied for.
+    applied_vacancies_mapping = VacancyApplicantMapping.objects.filter(applicant = user)
+    applied_vacancies_id = []
+    for mapping in applied_vacancies_mapping:
+        applied_vacancies_id.append(mapping.vacancy.id)
     vacancies = VacanciesInfoModel.objects.filter(skills__name__in = applicant.skillset.names()).distinct()
+    # Now, we will exclude those vacancies from the resultant query set which the applicant has already applied for.
+    vacancies = vacancies.exclude(id__in = applied_vacancies_id)
     result = []
     for vacancy in vacancies:
         temp_result = {}
@@ -509,6 +517,14 @@ def search_matching_vacancies(request, username):
 def search_matching_applicants(request, id):
     vacancy = VacanciesInfoModel.objects.get(id = id)
     applicants_obj = ApplicantInfoModel.objects.filter(skillset__name__in = vacancy.skills.names()).distinct()
+    # Get the applicants who have already applied for the vacancy.
+    mapping_queryset = VacancyApplicantMapping.objects.filter(vacancy = vacancy)
+    applied_users = []
+    for mapping in mapping_queryset:
+        applied_users.append(mapping.applicant)
+    # Removing the applicants who have already applied for the vacancy.
+    applicants_obj = applicants_obj.exclude(user__in = applied_users)
+
     applicants = []
     for applicant_obj in applicants_obj:
         applicants.append(User.objects.get(username = applicant_obj.user.username))
@@ -575,6 +591,41 @@ def get_vacancy_by_id(request, id):
     temp_result ["recruitment_committee"] = flag
     return Response({"vacancy" : temp_result}, status = 200)
 
+# removed already applied vacancies.
+@api_view(["GET"])
+def get_all_vacancies_for_applicant(request, username):
+        vacancies = VacanciesInfoModel.objects.all()
+        user = User.objects.get(username = username)
+        # Here, we are getting the id's of the vacancies which the applicant has already applied for.
+        applied_vacancies_mapping = VacancyApplicantMapping.objects.filter(applicant = user)
+        applied_vacancies_id = []
+        for mapping in applied_vacancies_mapping:
+            applied_vacancies_id.append(mapping.vacancy.id)
+        # Now, we will exclude those vacancies from the resultant query set which the applicant has already applied for.
+        vacancies = vacancies.exclude(id__in = applied_vacancies_id)
+        result = []
+        for vacancy in vacancies:
+            temp_result = {}
+            temp = vacancy.__dict__
+            print (temp)
+            for key in temp:
+                print (key)
+                # This state is the reference object to the college.
+                if (key == "_state"):
+                    continue
+                temp_result[key] = temp[key]
+            temp_result["skills"] = vacancy.skills.names()
+            temp_result["college_name"] = vacancy.college.user.username
+            temp_result["location"] = vacancy.college.location
+            temp_result["website"] = vacancy.college.website
+            flag = False
+            if (RecruitmentCommitteeInfoModel.objects.filter(vacancy = vacancy).exists()):
+                flag = True
+            temp_result ["recruitment_committee"] = flag
+            result.append(temp_result)
+        return Response({"vacancies" : result}, status = 200)
+
+
 
 # DOCUMENTATION DONE!
 @api_view(["POST"])
@@ -583,6 +634,7 @@ def apply_for_vacancy(request, username):
     request.data["vacancy"] = VacanciesInfoModel.objects.get(id = request.data["id"])
     request.data["status"] = "under review"
     del request.data["id"]
+    request.data["date_of_application"] = datetime.now()
     VacancyApplicantMapping.objects.create(**request.data)
     return Response({"mssg" : "Applied for the vacancy successfully!"}, status = 200)
 
