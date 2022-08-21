@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+from pickle import TRUE
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -133,3 +134,9 @@ MEDIA_ROOT = MEDIA_DIR
 LOGIN_URL = '/login/'
 
 TAGGIT_CASE_INSENSITIVE = True
+
+EMAIL_HOST = 'smtp.gmail.com' 
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'rapidrecruits1.0@gmail.com' 
+EMAIL_HOST_PASSWORD = 'ifberbymldgdumte'
+EMAIL_USE_TLS = True   
