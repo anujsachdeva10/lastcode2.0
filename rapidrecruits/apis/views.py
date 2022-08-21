@@ -842,7 +842,7 @@ class RecruitmentCommitteeAPIView(APIView):
             message_name,#subject
             message,#message
             message_email,#from email
-            [first_user.email,second_user.email,third_user.email,fourth_user.email,fifth_user.email,]#to email
+            [first_user.email,second_user.email,third_user.email,fourth_user.email,fifth_user.email]#to email
         )
         return Response({"mssg" : "committee updated successfully"}, status = 204)
 
