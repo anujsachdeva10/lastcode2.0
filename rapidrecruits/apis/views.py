@@ -331,7 +331,6 @@ class EmployeeAPIView(APIView):
                     message_email,#from email
                     [college.director_mail, college.registrar_mail, college.hod_mail, employee.email, college.user.email],#to email
                 )
-
         result = sorted(result, key = lambda x : x["name"].lower())
         return Response({"employees" : result}, status = 200)
 
