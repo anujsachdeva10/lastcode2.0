@@ -640,7 +640,7 @@ def approach_applicant(request, username):
     message_name = "Member of recruitement Committee"
     message_email = "rapidrecruits1.0@gmail.com"
     message = "Your profile looks suitable for this vacancy. If interested please apply at the link {} , Vacancy Id {}".format(link, vacancy_id)
-    send_mail (
+    send_mail(
         message_name,#subject
         message,#message
         message_email,#from email
@@ -843,8 +843,7 @@ class RecruitmentCommitteeAPIView(APIView):
         message_name = "Member of recruitement Committee"
         message_email = "rapidrecruits1.0@gmail.com"
         message = "Dear all, You have been added as the member of Recruitment Committee for the Vacancy {} , Vacancy Id {}".format(vacancy.title,vacancy.id)
-        send_mail
-        (
+        send_mail(
             message_name,#subject
             message,#message
             message_email,#from email
@@ -867,8 +866,7 @@ class RecruitmentCommitteeAPIView(APIView):
         message_name = "Member of recruitement Committee"
         message_email = "rapidrecruits1.0@gmail.com"
         message = "Dear all, You have been added as the member of Recruitment Committee for the Vacancy {} , Vacancy Id {}".format(vacancy.title,vacancy.id)
-        send_mail
-        (
+        send_mail(
             message_name,#subject
             message,#message
             message_email,#from email
