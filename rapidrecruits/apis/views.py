@@ -610,7 +610,7 @@ def approach_applicant(request, username):
     message_name = "Member of recruitement Committee"
     message_email = "rapidrecruits1.0@gmail.com"
     message = "Your profile looks suitable for this vacancy. If interested please apply at the link {} , Vacancy Id {}".format(link, vacancy_id)
-    send_mail (
+    send_mail(
         message_name,#subject
         message,#message
         message_email,#from email
@@ -669,7 +669,7 @@ class VacanciesAPIView(APIView):
                 message_name,#subject
                 message,#message
                 message_email,#from email
-                [employees.email],#to email   
+                [employees.email],#to email
             )
         return Response({"mssg": "Vacancy posted successfully!"}, status = 201)
 
