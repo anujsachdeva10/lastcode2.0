@@ -596,6 +596,36 @@ def change_status_of_applicant(request, id, username):
     mapping = VacancyApplicantMapping.objects.get(vacancy = vacancy, applicant = applicant)
     mapping.status = request.data["status"]
     mapping.save()
+    if(mapping.status == "Rejected"):
+        message_name = "Sorry"
+        message_email = "rapidrecruits1.0@gmail.com"
+        message = "Rejected"
+        send_mail(
+            message_name,#subject
+            message,#message
+            message_email,#from email
+            [applicant.email]#to email
+        )
+    elif(mapping.status == "Hired"):
+        message_name = "Congratulations"
+        message_email = "rapidrecruits1.0@gmail.com"
+        message = "Selected"
+        send_mail(
+            message_name,#subject
+            message,#message
+            message_email,#from email
+            [applicant.email]#to email
+        )
+    elif(mapping.status == "Meet Scheduled"):
+        message_name = "Meeting Scheduled"
+        message_email = "rapidrecruits1.0@gmail.com"
+        message = "Congratulations ,  you are shortlisted. Meeting details is shared below "
+        send_mail(
+            message_name,#subject
+            message,#message
+            message_email,#from email
+            [applicant.email]#to email
+        )
     return Response({"mssg" : "Status updated successfully"}, status = 200)
 
 
@@ -669,7 +699,7 @@ class VacanciesAPIView(APIView):
                 message_name,#subject
                 message,#message
                 message_email,#from email
-                [employees.email],#to email   
+                [employee.email],#to email   
             )
         return Response({"mssg": "Vacancy posted successfully!"}, status = 201)
 
