@@ -277,6 +277,8 @@ def get_employee_by_id(request, college_name, id):
         employee = EmployeeInfoModel.objects.get(college = college, id = id)
         temp_result = employee.__dict__
         del temp_result["_state"]
+        skills = employee.skills.names()
+        temp_result["skills"] = skills
         return Response({"employee" : temp_result}, status = 200)
 
 
@@ -290,6 +292,8 @@ def get_employee_by_empid(request, college_name, empid):
             employee = EmployeeInfoModel.objects.get(college = college, empid = empid)
             temp_result = employee.__dict__
             del temp_result["_state"]
+            skills = employee.skills.names()
+            temp_result["skills"] = skills
             return Response({"employee" : temp_result}, status = 200)
         else:
             return Response({"mssg" : "employee does not exists!"}, status = 404)
