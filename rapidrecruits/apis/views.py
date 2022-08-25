@@ -876,6 +876,8 @@ class RecruitmentCommitteeAPIView(APIView):
             temp_result["id"]=member.id
             temp_result["empid"]=member.empid
             temp_result["name"]=member.name
+            temp_result["email"]=member.email   
+            temp_result["phone_number"]=member.phone_number      
             temp_result["designation"]=member.designation
             temp_result["department"]=member.department
             result.append(temp_result)
