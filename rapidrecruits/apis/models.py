@@ -87,7 +87,8 @@ class EmployeeInfoModel(models.Model):
     # Desgination Details.
     designation = models.CharField(max_length = 250, blank = True, null = True)
     department = models.CharField(max_length = 250, blank = True, null = True)
-
+    skills = TaggableManager()
+    state = models.CharField(max_length = 20, null = True, blank = True)
     class Meta:
         unique_together = ('college', 'empid')
 
