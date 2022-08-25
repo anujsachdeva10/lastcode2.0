@@ -162,8 +162,10 @@ class CollegeAPIView(APIView):
             else:
                 return Response({"mssg": "passwords do not match!"}, status = 409)
         elif (request.data["purpose"] == "login"):
-            if (authenticate(username = request.data["username"], password = request.data["password"])):
-                return Response({"mssg": "user logedin successfully!"}, status = 200)
+            if (request.data["username"] == "AICTE" and authenticate(username = request.data["username"], password = request.data["password"])):
+                return Response({"mssg": "user logedin successfully!", "superuser": True}, status = 200)
+            elif (authenticate(username = request.data["username"], password = request.data["password"])):
+                return Response({"mssg": "user logedin successfully!", "superuser": True}, status = 200)
             else:
                 return Response({"mssg": "login failed!"}, status = 404)
         elif (request.data["purpose"] == "fill details"):
