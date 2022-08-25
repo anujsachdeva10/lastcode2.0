@@ -75,6 +75,8 @@ class CollegeInfoModel(models.Model):
 
 class EmployeeInfoModel(models.Model):
     # Personal Details.
+    contractual = models.CharField(max_length = 15, default = False, blank = True, null = True) 
+    last_working_day = models.CharField(max_length = 30, null = True, blank = True)
     college = models.ForeignKey(CollegeInfoModel, on_delete=models.CASCADE, related_name="employee")
     name = models.CharField(max_length = 250, blank = False)
     DOB = models.CharField(max_length = 15, null = False)
@@ -89,6 +91,7 @@ class EmployeeInfoModel(models.Model):
     department = models.CharField(max_length = 250, blank = True, null = True)
     skills = TaggableManager()
     state = models.CharField(max_length = 20, null = True, blank = True)
+
     class Meta:
         unique_together = ('college', 'empid')
 
@@ -97,6 +100,7 @@ class EmployeeInfoModel(models.Model):
 
 
 class VacanciesInfoModel(models.Model):
+    contractual = models.CharField(max_length = 20, blank = True, null = True)
     college = models.ForeignKey(CollegeInfoModel, on_delete=models.CASCADE, related_name = "vacancy")
     title = models.CharField(max_length = 100, blank = True, null = True)   # This may include Prof. for CG, CS etc.
     type = models.CharField(max_length = 100, blank = True, null = True)    # This may include assistant prof, prof, intern etc.
