@@ -37,6 +37,7 @@ class ApplicantInfoModel(models.Model):
 class ApplicantQualificationModel(models.Model):
     applicant = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "qualification")
     qualification_title = models.CharField(max_length = 50, blank = True)
+    program = models.CharField(max_length = 50, blank = True)
     marks = models.FloatField(null = True)
     passing_year = models.CharField(max_length = 20, blank = True)
     institute = models.CharField(max_length = 50, blank = False)

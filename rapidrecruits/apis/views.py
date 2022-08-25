@@ -235,6 +235,7 @@ class QualificationAPIView(APIView):
         for qualification in qualifications:
             temp_result = {}
             temp_result["qualification_title"] = qualification.qualification_title
+            temp_result["program"] = qualification.program
             temp_result["institute"] = qualification.institute
             temp_result["passing_year"] = qualification.passing_year
             temp_result["marks"] = qualification.marks
@@ -253,6 +254,7 @@ class QualificationAPIView(APIView):
         applicant = User.objects.get(username = username)
         qualification = ApplicantQualificationModel.objects.get(applicant = applicant, qualification_title = request.data["title"])
         qualification.qualification_title = request.data["qualification_title"]
+        qualification.program = request.data["program"]
         qualification.institute = request.data["institute"]
         qualification.passing_year = request.data["passing_year"]
         qualification.marks = request.data["marks"]
