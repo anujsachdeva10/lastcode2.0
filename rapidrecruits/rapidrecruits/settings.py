@@ -28,7 +28,7 @@ SECRET_KEY = 'joc@pv6v#^6*62qzch&e_9zyxx84e^*rz#wk&om_11b0q1qsxf'
 DEBUG = True
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['rapidrecruits.pythonanywhere.com']
 
 
 # Application definition
