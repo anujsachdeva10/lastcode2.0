@@ -752,7 +752,7 @@ class VacanciesAPIView(APIView):
                 message_name,#subject
                 message,#message
                 message_email,#from email
-                [employee.email],#to email   
+                [employee.email],#to email
             )
         return Response({"mssg": "Vacancy posted successfully!"}, status = 201)
 
@@ -878,8 +878,8 @@ class RecruitmentCommitteeAPIView(APIView):
             temp_result["id"]=member.id
             temp_result["empid"]=member.empid
             temp_result["name"]=member.name
-            temp_result["email"]=member.email   
-            temp_result["phone_number"]=member.phone_number      
+            temp_result["email"]=member.email
+            temp_result["phone_number"]=member.phone_number
             temp_result["designation"]=member.designation
             temp_result["department"]=member.department
             result.append(temp_result)
