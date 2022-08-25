@@ -17,6 +17,14 @@ from datetime import *
 
 
 @api_view(["GET"])
+def AICTE_dashboard(request): 
+    employee_count = EmployeeInfoModel.objects.count()
+    vacancies_count = VacanciesInfoModel.objects.count()
+    college_count = CollegeInfoModel.objects.count()
+    return Response({"employee_count": employee_count, "vacancies_count": vacancies_count, "college_count": college_count}, status = 200)
+
+
+@api_view(["GET"])
 def dashboard_view(request, username):
     user = User.objects.get(username = username)
     college = CollegeInfoModel.objects.get(user = user)
