@@ -45,5 +45,5 @@ urlpatterns = [
     # AICTE URL's
     path('api/AICTE_dashboard/', views.AICTE_dashboard),
     path('api/AICTE/all_colleges/', views.all_colleges),
-    path('api/AICTE/all_employees/', views.all_colleges),
+    path('api/AICTE/all_employees/', views.all_employees),
 ]
