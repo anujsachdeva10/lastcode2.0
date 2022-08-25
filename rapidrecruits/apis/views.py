@@ -252,7 +252,7 @@ class QualificationAPIView(APIView):
     # Method to update the qualifications of a user using the username and the qualification title.
     def put(self, request, username, format = None):
         applicant = User.objects.get(username = username)
-        qualification = ApplicantQualificationModel.objects.get(applicant = applicant, qualification_title = request.data["title"])
+        qualification = ApplicantQualificationModel.objects.get(applicant = applicant, qualification_title = request.data["qualification_title"])
         qualification.qualification_title = request.data["qualification_title"]
         qualification.program = request.data["program"]
         qualification.institute = request.data["institute"]
