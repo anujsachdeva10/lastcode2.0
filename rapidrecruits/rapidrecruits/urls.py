@@ -32,7 +32,7 @@ urlpatterns = [
     # path('api/changestatus/<str:college_name>/<int:id>/', views.Change_employee_status),
     path('api/vacancies/<str:college_name>/', views.VacanciesAPIView.as_view()),
     path('api/vacancies/', views.VacanciesAPIView.as_view()),
-    path('api/get_vacancy_by_id/<int:id>/', views.get_vacancy_by_id),   
+    path('api/get_vacancy_by_id/<int:id>/', views.get_vacancy_by_id),
     path('api/getuservacancies/<str:username>/', views.get_vacancies_for_applicant),
     path('api/getvacancyapplicants/<int:id>/', views.get_applicants_for_vacancy),
     path('api/getmatchingvacancies/<str:username>/', views.search_matching_vacancies),
@@ -45,5 +45,5 @@ urlpatterns = [
     # AICTE URL's
     path('api/AICTE_dashboard/', views.AICTE_dashboard),
     path('api/AICTE/all_colleges/', views.all_colleges),
-    path('api/AICTE/all_employees/', views.all_colleges),
+    path('api/AICTE/all_employees/', views.all_employees),
 ]
