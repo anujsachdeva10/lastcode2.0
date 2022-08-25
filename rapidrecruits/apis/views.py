@@ -442,6 +442,8 @@ class EmployeeAPIView(APIView):
                 message_email,#from email
                 [college.director_mail, college.registrar_mail, college.hod_mail, employee.email, college.user.email],#to email
             )
+            employee.status = "Non Active"
+            employee.last_working_day = request.data["last_working_day"]
         return Response({"mssg": "employee details updated successfully"}, status = 204)
 
     # Method to delete the record of an employee using college name and id of the employee.
