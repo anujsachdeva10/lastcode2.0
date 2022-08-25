@@ -332,9 +332,10 @@ class EmployeeAPIView(APIView):
             print (temp)
             for key in temp:
                 # This state is the reference object to the college.
-                if (key == "_state"):
+                if (key == "_state" or key == "skills"):
                     continue
                 temp_result[key] = temp[key]
+            temp_result["skills"] = employee.skills.names()
             result.append(temp_result)
             dob_year = (datetime.strptime(employee.DOB,"%d/%m/%Y")).year
             dob_month = (datetime.strptime(employee.DOB,"%d/%m/%Y")).month
@@ -374,16 +375,22 @@ class EmployeeAPIView(APIView):
             column = sheet_obj.max_column
             count = 0
             print (row, column, sheet_obj.cell(row = 2, column = 1).value)
-            keys = ["college", "empid", "name", "DOB", "gender", "category", "status", "designation", "department", "email", "phone_number"]
+            keys = ["college", "empid", "name", "DOB", "gender", "category", "status", "designation", "department", "email", "phone_number", "state"]
             for i in range(2, row + 1):
                 values = [college]
-                for j in range(1, column + 1):
+                for j in range(1, column):
                     values.append(sheet_obj.cell(row = i, column = j).value)
                 comb_list = zip(keys, values)
                 data = dict(comb_list)
                 if (data["name"] == None):
                     break
-                EmployeeInfoModel.objects.create(**data)
+                print (values)
+                employee = EmployeeInfoModel.objects.create(**data)
+                skills = sheet_obj.cell(row = i, column = column).value
+                skills = skills.split(",")
+                print (skills)
+                for skill in skills:
+                    employee.skills.add(skill)
                 count += 1
             return Response({"mssg": "{} number of records created".format(count)}, status = 201)
         elif (request.data["method"] == "manual"):
@@ -409,6 +416,10 @@ class EmployeeAPIView(APIView):
         employee.designation = request.data["designation"]
         employee.empid = request.data["empid"]
         employee.department = request.data["department"]
+        employee.skills.clear()
+        for skill in request.data["skills"]:
+            employee.skills.add(skill)
+        employee.state = request.data["state"]
         employee.save()
         if (request.data["status"] == "Non Active" and flag == 0):
             message_name = "Initiate recruitment process"
