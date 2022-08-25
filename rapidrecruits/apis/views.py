@@ -30,16 +30,34 @@ def all_colleges(request):
     result = []
     for college in colleges:
         username = college.user.username
+        location = college.location 
+        website = college.website
         employee_count = EmployeeInfoModel.objects.filter(college = college).count()
         vacancies_count = VacanciesInfoModel.objects.filter(college = college).count()
         active_employee_count = EmployeeInfoModel.objects.filter(college = college, status = "Active").count()
         non_active_employee_count = EmployeeInfoModel.objects.filter(college = college, status = "Non Active").count()
-        result.append({"username": username, "employee_count": employee_count, "vacancies_count": vacancies_count, "active_employee_count": active_employee_count, "non_active_employee_count": non_active_employee_count})
+        result.append({"username": username, "locations": location, "website": website, "employee_count": employee_count, "vacancies_count": vacancies_count, "active_employee_count": active_employee_count, "non_active_employee_count": non_active_employee_count})
     return Response(result, status = 200)
 
 
-# @api_view(["GET"])
-# def all_employees(request, state, skills):
+@api_view(["GET"])
+def all_employees(request):
+    employees = EmployeeInfoModel.objects.all()
+    result = []
+    for employee in employees:
+        temp_result = {}
+        temp = employee.__dict__
+        for key in temp:
+            # This state is the reference object to the college.
+            if (key == "_state" or key == "skills"):
+                continue
+            temp_result[key] = temp[key]
+        temp_result["skills"] = employee.skills.names()
+        result.append(temp_result)
+    result = sorted(result, key = lambda x : x["name"].lower())
+    return Response({"employees" : result}, status = 200)
+
+
 
 
 
@@ -426,6 +444,8 @@ class EmployeeAPIView(APIView):
         employee.empid = request.data["empid"]
         employee.department = request.data["department"]
         employee.skills.clear()
+        employee.status = request.data["status"]
+        employee.last_working_day = request.data["last_working_day"]
         for skill in request.data["skills"]:
             employee.skills.add(skill)
         employee.state = request.data["state"]
@@ -440,8 +460,6 @@ class EmployeeAPIView(APIView):
                 message_email,#from email
                 [college.director_mail, college.registrar_mail, college.hod_mail, employee.email, college.user.email],#to email
             )
-            employee.status = "Non Active"
-            employee.last_working_day = request.data["last_working_day"]
         return Response({"mssg": "employee details updated successfully"}, status = 204)
 
     # Method to delete the record of an employee using college name and id of the employee.
