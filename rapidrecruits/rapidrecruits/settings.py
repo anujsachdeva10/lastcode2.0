@@ -27,8 +27,8 @@ SECRET_KEY = 'joc@pv6v#^6*62qzch&e_9zyxx84e^*rz#wk&om_11b0q1qsxf'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-
-ALLOWED_HOSTS = ['rapidrecruits.pythonanywhere.com']
+# 'rapidrecruits.pythonanywhere.com'
+ALLOWED_HOSTS = []
 
 
 # Application definition
