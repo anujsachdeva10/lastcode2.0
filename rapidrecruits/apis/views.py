@@ -395,7 +395,12 @@ class EmployeeAPIView(APIView):
             return Response({"mssg": "{} number of records created".format(count)}, status = 201)
         elif (request.data["method"] == "manual"):
             request.data["details"]["college"] = college
-            EmployeeInfoModel.objects.create(**request.data["details"])
+            temp = request.data["details"]["skills"]
+            del request.data["details"]["skills"]
+            employee = EmployeeInfoModel.objects.create(**request.data["details"])
+            for skill in temp:
+                employee.skills.add(skill)
+            employee.save()
             return Response({"mssg": "employee added successfully!"}, status = 201)
 
     # Method to update the data of the employee using college name a.k.a. username and the employee id as there is no other unique parameter to be used.
