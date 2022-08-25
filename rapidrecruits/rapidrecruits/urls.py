@@ -42,4 +42,6 @@ urlpatterns = [
     path('api/approachapplicant/<str:username>/', views.approach_applicant),
     path('api/changestatus/<int:id>/<str:username>/', views.change_status_of_applicant),
     path('api/home/<str:username>/', views.dashboard_view),
+    # AICTE URL's
+    path('api/AICTE_dashboard/', views.AICTE_dashboard),
 ]
