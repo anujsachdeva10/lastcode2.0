@@ -64,9 +64,6 @@ def incomplete_vacancies(request):
     result = []
     for vacancy in vacancies:
         date = datetime.strptime(vacancy.date_of_posting,"%d/%m/%Y")
-        # vacancy_month = (datetime.strptime(vacancy.date_of_posting,"%d/%m/%Y")).month
-        # vacancy_year = (datetime.strptime(vacancy.date_of_posting,"%d/%m/%Y")).year
-        # print(dob_year,dob_date,dob_month,date.today().year,date.today().day,date.today().month)
         if (date.today() > date + timedelta(30)) and vacancy.state:
             temp_result = {}
             temp = vacancy.__dict__
