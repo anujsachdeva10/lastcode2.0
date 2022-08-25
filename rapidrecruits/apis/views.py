@@ -25,6 +25,25 @@ def AICTE_dashboard(request):
 
 
 @api_view(["GET"])
+def all_colleges(request):
+    colleges = CollegeInfoModel.objects.all()
+    result = []
+    for college in colleges:
+        username = college.user.username
+        employee_count = EmployeeInfoModel.objects.filter(college = college).count()
+        vacancies_count = VacanciesInfoModel.objects.filter(college = college).count()
+        active_employee_count = EmployeeInfoModel.objects.filter(college = college, status = "Active").count()
+        non_active_employee_count = EmployeeInfoModel.objects.filter(college = college, status = "Non Active").count()
+        result.append({"username": username, "employee_count": employee_count, "vacancies_count": vacancies_count, "active_employee_count": active_employee_count, "non_active_employee_count": non_active_employee_count})
+    return Response(result, status = 200)
+
+
+# @api_view(["GET"])
+# def all_employees(request, state, skills):
+
+
+
+@api_view(["GET"])
 def dashboard_view(request, username):
     user = User.objects.get(username = username)
     college = CollegeInfoModel.objects.get(user = user)
