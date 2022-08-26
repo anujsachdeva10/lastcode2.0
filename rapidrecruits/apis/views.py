@@ -853,17 +853,17 @@ class VacanciesAPIView(APIView):
                 if(qualifications.exists()):
                     result.append(user.email)
             mail(result,vacancy.title,vacancy.id)
-        if(request.data["title"] == "Professor"):
+        if(request.data["title"] == "Associate Professor"):
             for applicant in ApplicantInfoModel.objects.all():
                 user = applicant.user
-                qualifications = ApplicantQualificationModel.objects.filter(applicant = user , qualification_title = "Associate Professor")
+                qualifications = ApplicantQualificationModel.objects.filter(applicant = user , qualification_title = "Post Doctoral")
                 if(qualifications.exists()):
                     result.append(user.email)
             mail(result,vacancy.title,vacancy.id)
-        if(request.data["title"] == "Professor"):
+        if(request.data["title"] == "Assistant Professor"):
             for applicant in ApplicantInfoModel.objects.all():
                 user = applicant.user
-                qualifications = ApplicantQualificationModel.objects.filter(applicant = user , qualification_title = "Assistant Professor")
+                qualifications = ApplicantQualificationModel.objects.filter(applicant = user , qualification_title = "Post-Graduate")
                 if(qualifications.exists()):
                     result.append(user.email)
             mail(result,vacancy.title,vacancy.id)
