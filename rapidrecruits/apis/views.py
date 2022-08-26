@@ -350,6 +350,14 @@ def get_employee_by_empid(request, college_name, empid):
             return Response({"mssg" : "employee does not exists!"}, status = 404)
 
 
+@api_view(["PUT"])
+def extend_tenure(request, id):
+    employee = EmployeeInfoModel.objects.get(id = id)
+    last_working_day = (datetime.strptime(employee.last_working_day,"%d/%m/%Y"))
+    employee.last_working_day = last_working_day + timedelta(30 * request.data["contract_period"])
+    employee.contract_period = request.data["contract_period"]
+    return Response({"mssg" : "tenure extended successfully!"}, status = 200)
+
 # DOCUMENTATION DONE!
 # this api is used to change the status of the employee from active to notice period and mail all the required faculties that recruitment process has been initiated.
 # @api_view(["POST"])

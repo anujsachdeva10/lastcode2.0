@@ -30,7 +30,7 @@ DEBUG = True
 #'rapidrecruits.pythonanywhere.com'
 
 # 'rapidrecruits.pythonanywhere.com'
-ALLOWED_HOSTS = ['rapidrecruits.pythonanywhere.com']
+ALLOWED_HOSTS = []
 
 
 # Application definition
