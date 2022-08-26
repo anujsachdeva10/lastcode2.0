@@ -42,7 +42,7 @@ def all_colleges(request):
     result = []
     for college in colleges:
         username = college.user.username
-        location = college.location 
+        location = college.location
         website = college.website
         employee_count = EmployeeInfoModel.objects.filter(college = college).count()
         vacancies_count = VacanciesInfoModel.objects.filter(college = college).count()
