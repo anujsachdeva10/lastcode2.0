@@ -74,9 +74,14 @@ def all_employees(request):
 def incomplete_vacancies(request):
     vacancies = VacanciesInfoModel.objects.all()
     result = []
+    college = {}
     for vacancy in vacancies:
         date = datetime.strptime(vacancy.date_of_posting,"%d/%m/%Y")
         if (date.today() > date + timedelta(30)) and vacancy.state:
+            if (vacancy.college.user.username in college):
+                college[vacancy.college.user.username] += 1
+            else:
+                college[vacancy.college.user.username] = 1
             temp_result = {}
             temp = vacancy.__dict__
             for key in temp:
@@ -89,7 +94,11 @@ def incomplete_vacancies(request):
             temp_result["location"] = vacancy.college.location
             temp_result["website"] = vacancy.college.website
             result.append(temp_result)
-    return Response({"vacancies" : result}, status = 200)
+    defaulters = {}
+    for col in college:
+        if (college[col] > 4):
+            defaulters[col] = college[col]
+    return Response({"vacancies" : result, "defaulters" : defaulters}, status = 200)
 
 
 @api_view(["GET"])
@@ -354,9 +363,12 @@ def get_employee_by_empid(request, college_name, empid):
 def extend_tenure(request, id):
     employee = EmployeeInfoModel.objects.get(id = id)
     last_working_day = (datetime.strptime(employee.last_working_day,"%d/%m/%Y"))
-    employee.last_working_day = last_working_day + timedelta(30 * request.data["contract_period"])
+    last_working_day = last_working_day + timedelta(30 * request.data["contract_period"])
+    last_working_day = last_working_day.strftime("%d/%m/%Y")
+    employee.last_working_day = last_working_day
     employee.contract_period = request.data["contract_period"]
-    return Response({"mssg" : "tenure extended successfully!"}, status = 200)
+    employee.save()
+    return Response({"mssg" : "tenure extended successfully!"}, status = 204)
 
 # DOCUMENTATION DONE!
 # this api is used to change the status of the employee from active to notice period and mail all the required faculties that recruitment process has been initiated.
