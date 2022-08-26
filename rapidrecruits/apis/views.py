@@ -847,7 +847,7 @@ class VacanciesAPIView(APIView):
         result = []
         if(request.data["title"] == "Professor"):
             #eligible_user = User.objects.filter(User)
-            for user in User:
+            for user in User.objects.all():
                 applicant = ApplicantInfoModel.objects.get(user = user)
                 qualifications = ApplicantQualificationModel.objects.filter(applicant = user , qualification_title = "Doctorate")
                 if(qualifications.exists()):
