@@ -47,5 +47,5 @@ urlpatterns = [
     path('api/AICTE/all_colleges/', views.all_colleges),
     path('api/AICTE/all_employees/', views.all_employees),
     path('api/AICTE/incomplete_vacancies/', views.incomplete_vacancies),
-    path('api/employee/extend_tenure/', views.extend_tenure)
+    path('api/employee/extend_tenure/<int:id>/', views.extend_tenure)
 ]
