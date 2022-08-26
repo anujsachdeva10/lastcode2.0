@@ -1,3 +1,4 @@
+import email
 from unicodedata import name
 from django.shortcuts import render
 
@@ -15,6 +16,17 @@ from django.views.decorators.csrf import csrf_exempt
 from datetime import *
 # Create your views here.
 
+#FILTER MAIL
+def mail(emails,title,id):
+    message_name = "Vacancy Created"
+    message_email = "rapidrecruits1.0@gmail.com"
+    message = "Dear all,  Vacancy for {}, Id {} has been created".format(title,id)
+    send_mail(
+        message_name,#subject
+        message,#message
+        message_email,#from email
+        emails#to email
+    )
 
 @api_view(["GET"])
 def AICTE_dashboard(request):
@@ -832,16 +844,19 @@ class VacanciesAPIView(APIView):
         vacancy = VacanciesInfoModel.objects.create(**request.data)
         for skill in temp:
             vacancy.skills.add(skill)
-        for employee in employees:
-            message_name = "Vacancy Created"
-            message_email = "rapidrecruits1.0@gmail.com"
-            message = "Dear all, Vacancy for {} has been created".format(vacancy.title)
-            send_mail(
-                message_name,#subject
-                message,#message
-                message_email,#from email
-                [employee.email],#to email
-            )
+        result = []
+        if(request.data["title"] == "Professor"):
+            #eligible_user = User.objects.filter(User)
+            for user in User:
+                applicant = ApplicantInfoModel.objects.get(user = user)
+                qualifications = ApplicantQualificationModel.objects.filter(applicant = user , qualification_title = "Doctorate")
+                if(qualifications.exists()):
+                    result.append(user.email)
+            mail(result,vacancy.title,vacancy.id)
+        if():
+            pass
+        if():
+            pass
         return Response({"mssg": "Vacancy posted successfully!"}, status = 201)
 
     # Method to update the details of a particular vacancy using college name and id of the vacancy.
