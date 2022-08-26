@@ -847,16 +847,26 @@ class VacanciesAPIView(APIView):
         result = []
         if(request.data["title"] == "Professor"):
             #eligible_user = User.objects.filter(User)
-            for user in User.objects.all():
-                applicant = ApplicantInfoModel.objects.get(user = user)
+            for applicant in ApplicantInfoModel.objects.all():
+                user = applicant.user
                 qualifications = ApplicantQualificationModel.objects.filter(applicant = user , qualification_title = "Doctorate")
                 if(qualifications.exists()):
                     result.append(user.email)
             mail(result,vacancy.title,vacancy.id)
-        if():
-            pass
-        if():
-            pass
+        if(request.data["title"] == "Professor"):
+            for applicant in ApplicantInfoModel.objects.all():
+                user = applicant.user
+                qualifications = ApplicantQualificationModel.objects.filter(applicant = user , qualification_title = "Associate Professor")
+                if(qualifications.exists()):
+                    result.append(user.email)
+            mail(result,vacancy.title,vacancy.id)
+        if(request.data["title"] == "Professor"):
+            for applicant in ApplicantInfoModel.objects.all():
+                user = applicant.user
+                qualifications = ApplicantQualificationModel.objects.filter(applicant = user , qualification_title = "Assistant Professor")
+                if(qualifications.exists()):
+                    result.append(user.email)
+            mail(result,vacancy.title,vacancy.id)
         return Response({"mssg": "Vacancy posted successfully!"}, status = 201)
 
     # Method to update the details of a particular vacancy using college name and id of the vacancy.
