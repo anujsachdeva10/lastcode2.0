@@ -42,7 +42,7 @@ def all_colleges(request):
     result = []
     for college in colleges:
         username = college.user.username
-        location = college.location 
+        location = college.location
         website = college.website
         employee_count = EmployeeInfoModel.objects.filter(college = college).count()
         vacancies_count = VacanciesInfoModel.objects.filter(college = college).count()
@@ -847,8 +847,8 @@ class VacanciesAPIView(APIView):
         result = []
         if(request.data["title"] == "Professor"):
             #eligible_user = User.objects.filter(User)
-            for user in User.objects.all():
-                applicant = ApplicantInfoModel.objects.get(user = user)
+            for applicant in ApplicantInfoModel.objects.all():
+                user = applicant.user
                 qualifications = ApplicantQualificationModel.objects.filter(applicant = user , qualification_title = "Doctorate")
                 if(qualifications.exists()):
                     result.append(user.email)
